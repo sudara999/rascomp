@@ -4,7 +4,7 @@ This is a simple compiler for the language 'rascl'
 
 ## Phase 1: Lexical Analysis
 
-Lexical Analysis will be done by Table-driven scanning. The lexical analyser is implemented in lexer.c
+The lexical analyser is implemented in lexer.c
 
 ### Lexical Analyser function calls
 
@@ -13,13 +13,14 @@ The lexical analyser, lexer.c, contains the following the function calls:
 #### int initLexer(char *filename);
 
 This function will initialise the lexical analyser with the source file. 
-Returns 1 if the file is opened successfully, 0 if not.
+Returns SUCC if the file is opened successfully, FAIL if not.
 
-#### struct token* getNextToken(void);
+#### int getNextToken(struct token *nextToken);
 
 This function will return the next token.
-If there is none, it will return NULL.
-Caution: Free the token after use, since the token is created in the heap.
+Returns SUCC on success. 
+If there is none, it will return FAIL. nextToken's token_type field will be NO_SYM.
+If an invalid symbol is read, then the symbol is stored in nextToken's token_val field. The token_type field will be INVALID_SYM. FAIL is returned. 
 
 ### Lexical Analyser data structures
 
@@ -35,10 +36,14 @@ struct token {
 
 They have the following members:
 	+ token_type: The type of the token (for example, the IF token)
-	+ token_val: Tokens may have a value associated with them.
-	+ token_repr: The textual representation of the token. This may be printed out.
+	+ token_val: The default value/type of a token is the lexeme that was scanned stored in a char array. To change the default value/type, the function onTokenDetect is used. 
+	+ token_repr: The textual representation of the token. The textual representation of the tokens are stored in an array, char *token_reps[]. To change the default textual representation, the function onTokenDetect is used.
 
 Please refer to lexer.h for more details.
+
+### How the lexical analyser works
+
+Lexical Analysis will be done by table-driven scanning. The delta function will return the next state based on the current state and the input symbol. If the current state is a final state, the accept function will return the token associated with the current state. By default, this token is returned to the user. But, the token can be ignored (not returned) by returning the next possible token instead within the onTokenDetect function. 
 
 ### Testing the lexical analyser
 

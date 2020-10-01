@@ -4,17 +4,16 @@
 
 int main(){
 	char filename[] = "./testLexer.txt";
-	if (!initLexer(filename)) {
-		printf("File could not be opened.\n");
-		return -1;
+	if (initLexer(filename) == SUCC) {
+		struct token *token = malloc(sizeof(struct token));
+		// ! error handling
+		while (getNextToken(token) == SUCC)
+			printf("%s\n", token->token_repr);
+		free(token);
+		return 0;
 	} 
 	else {
-		struct token *token = getNextToken();
-		while (token != NULL) {
-			printf("%s\n", token->token_repr);
-			free(token);
-			token = getNextToken();
-		}
-		return 0;
+		printf("File could not be opened.\n");
+		return -1;
 	}
 }
