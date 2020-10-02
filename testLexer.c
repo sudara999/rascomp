@@ -12,8 +12,6 @@ int main(){
 		free(token);
 		return 0;
 	} 
-	else {
-		printf("File could not be opened.\n");
+	else
 		return -1;
-	}
 }
