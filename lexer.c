@@ -98,6 +98,8 @@ int getNextToken (struct token *token)
 		}
 		// reinitialize position variables on the line_buffer
 		else {
+			// A token is assumed to be contained within a line
+			// 	and not spread over multiple lines
 			start_pos = 0;
 			end_pos = 0;
 		}

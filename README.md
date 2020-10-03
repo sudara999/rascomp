@@ -44,6 +44,7 @@ Please refer to lexer.h for more details.
 ### How the lexical analyser works
 
 Lexical Analysis will be done by table-driven scanning. The delta function will return the next state based on the current state and the input symbol. If the current state is a final state, the accept function will return the token associated with the current state. By default, this token is returned to the user. But, the token can be ignored (not returned) by returning the next possible token instead within the onTokenDetect function. 
+The source file will be read line-by-line and scanned for tokens. The tokens are assumed to be contained within a single line, and not spreading over multiple lines. So multiline comments may not be detected, for example. The lines have a maximum size limitation, MAX_LINE_LEN, and the tokens have a maximum size length, MAX_TOKEN_LEN.
 
 ### Testing the lexical analyser
 
