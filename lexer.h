@@ -19,6 +19,7 @@
 // 	to (excluding) the null character
 
 enum token_type {
+	// OPERATORS
 	ASSIGN,	// =
 	LT,	// <
 	LE,	// <=
@@ -32,7 +33,30 @@ enum token_type {
 	DIV,	// /
 	NOT,	// !
 	AND,	// &&
-	OR	// ||
+	OR,	// ||
+	// PUNCTUATION
+	SEMICOLON,	// ;
+	LPAREN,		// (
+	RPAREN,		// )
+	COMMA,		// ,
+	LBRACE,		// {
+	RBRACE, 	// }
+	LBRACKET,	// [
+	RBRACKET,	// ]
+	// KEYWORDS
+	IF,		// if
+	ELSE, 		// else
+	WHILE, 		// while
+	INT, 		// int
+	FLOAT, 		// float
+	PRINT,		// print
+	READ, 		// read
+	FUNCTION,	// function
+	// OTHER
+	ID,		// <identifier>
+	ICONST,		// <integer constant>
+	FCONST,		// <Floating constant>
+	COMMENT		// <comment>
 };
 
 union token_val{

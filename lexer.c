@@ -20,7 +20,30 @@ static char *token_reps[] = {
 	"DIV",		// /
 	"NOT",		// !
 	"AND",		// &&
-	"OR"		// ||
+	"OR",		// ||
+	// PUNCTUATION
+	"SEMICOLON",	// ;
+	"LPAREN",	// (
+	"RPAREN",	// )
+	"COMMA",	// ,
+	"LBRACE",	// {
+	"RBRACE", 	// }
+	"LBRACKET",	// [
+	"RBRACKET",	// ]
+	// KEYWORDS
+	"Keyword:IF",		// if
+	"Keyword:ELSE", 	// else
+	"Keyword:WHILE", 	// while
+	"Keyword:INT", 		// int
+	"Keyword:FLOAT", 	// float
+	"Keyword:PRINT",	// print
+	"Keyword:READ", 	// read
+	"Keyword:FUNCTION",	// function
+	// OTHER
+	"ID:",		// <identifier>
+	"ICONST:",	// <integer constant>
+	"FCONST:",	// <Floating constant>
+	"COMMENT"	// <comment>
 };
 
 static FILE *fp;
@@ -125,10 +148,22 @@ int getNextToken (struct token *token)
 
 static int onTokenDetect (struct token *token)
 {
+	// This function is called when a token is detected. Any additional changes
+	// 	can be made to the token.
+	enum token_type token_type = token->token_type;	
 	// I-tokens are special tokens that will be ignored
 	// 	by returning the next token instead
-	if (token->token_type == I_TOKEN)
+	if (token_type == I_TOKEN)
 		return getNextToken(token);
+	// The textual representation of ID, ICONST or FCONST tokens should show the lexeme
+	if (token_type == ID || token_type == ICONST || token_type == FCONST)
+		strcat(token->token_repr, token->token_val.str_val);
+	// ICONST token value should be changed to an integer that matches the lexeme
+	if (token_type == ICONST)
+		token->token_val.i_val = atoi(token->token_val.str_val);
+	// FCONST token value should be changed to an float that matches the lexeme
+	if (token_type == FCONST)
+		token->token_val.f_val = atof(token->token_val.str_val);
 	return SUCC;	
 }
 

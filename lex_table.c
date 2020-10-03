@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lex_table.h"
 
-#define NUM_OF_STATES 18	// Number of states, excluding the error state
+#define NUM_OF_STATES 66	// Number of states, excluding the error state
 #define	HASH_SIZE 11		// Hash-table size 
 				//	- try to base around average number of transitions per state
 
@@ -31,6 +31,16 @@ struct c_list {
 	struct c_list *next;
 };
 
+void destroy_c_list (struct c_list *cl)
+{
+	struct c_list *next_cl;
+	while (cl != NULL){
+		next_cl = cl->next;
+		free(cl);
+		cl = next_cl;
+	}
+}
+
 // The Transition table
 // 	Each state is mapped to hash-table that will map the input symbol to the next state
 struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
@@ -42,6 +52,7 @@ struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
 // 	If it is not an accept state,
 // 		the value is NOT_ACC_STATE
 static enum token_type accept_table[] = {
+	// OPERATORS
 	NOT_ACC_STATE,
 	ASSIGN,
 	EQ,
@@ -59,6 +70,61 @@ static enum token_type accept_table[] = {
 	AND,
 	NOT_ACC_STATE,
 	OR,
+	// PUNCTUATION
+	SEMICOLON,
+	LPAREN,
+	RPAREN,
+	COMMA,
+	LBRACE,
+	RBRACE,
+	LBRACKET,
+	RBRACKET,	
+	// KEYWORDS
+	NOT_ACC_STATE,
+	IF,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	ELSE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	WHILE,
+	NOT_ACC_STATE,
+	INT,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	FLOAT,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	PRINT,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	READ,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	FUNCTION,
+	// ID
+	ID,
+	// ICONST
+	ICONST,
+	// FCONST
+	FCONST,
+	// COMMENT
+	NOT_ACC_STATE,
+	NOT_ACC_STATE,
+	COMMENT,
+	// I-TOKEN
 	I_TOKEN
 };
 
@@ -110,6 +176,7 @@ int create_lex_table()
 {
 	// Create the transition table for the DFA
 	// The table is created from the file TABLE_SRC
+	// Note: Remember to destroy the table (and free up memory) when it is not needed anymore 
 	FILE *fp;
 	fp = fopen(TABLE_SRC, "r");
 	if (fp == NULL){
@@ -143,12 +210,15 @@ int delta (int current_state, char input_symbol)
 	struct t_list *tl;
 	struct c_list *cl;	
 	if (current_state < 0)	// The error state only has transitions to itself
-		return ERR_STATE;	
-	for (cl = findClasses(input_symbol);	// find all the classes the symbol belongs to 
-		cl != NULL; cl = cl->next)
-			// check if there is a transition for one of the classes
-			if ((tl = lookup(current_state, cl->class)) != NULL) 
-				return tl->next_state;	
+		return ERR_STATE;
+	cl = findClasses(input_symbol);	// find all the classes the symbol belongs to	
+	for (struct c_list *curr_cl = cl; curr_cl != NULL; curr_cl = curr_cl->next)
+		// check if there is a transition for one of the classes
+		if ((tl = lookup(current_state, curr_cl->class)) != NULL) {
+			destroy_c_list(cl);	
+			return tl->next_state;
+		};
+	destroy_c_list(cl);
 	return ERR_STATE;
 }
 
@@ -175,7 +245,9 @@ struct c_list *findClasses(char symbol)
 	// 	state.
 	// 	But, if transitions are defined for overlapping classes, the transition is
 	// 	selected based on which class is defined first in this function.
-	 
+	// Note2: Remember to free the c_list nodes when they are not needed 
+	// 	You can use the function void destroy_c_list(struct c_list *).
+	
 	// The symbol belongs to the class of its own symbol representation
 	struct c_list *curr_cl, *cl = (struct c_list *) malloc(sizeof(struct c_list));	
 	curr_cl = cl;
@@ -207,6 +279,8 @@ struct c_list *findClasses(char symbol)
 	// 	This helps the user type out spaces
 	if (symbol == ' ')
 		ADD_CLASS("SPC");
+	// All symbols belong to the ANY class
+	ADD_CLASS("ANY");
 	
 	curr_cl->next = NULL;
 	return cl;
