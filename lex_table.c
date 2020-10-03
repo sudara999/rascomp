@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lex_table.h"
 
-#define NUM_OF_STATES 17	// Number of states, excluding the error state
+#define NUM_OF_STATES 18	// Number of states, excluding the error state
 #define	HASH_SIZE 11		// Hash-table size 
 				//	- try to base around average number of transitions per state
 
@@ -45,6 +45,20 @@ static enum token_type accept_table[] = {
 	NOT_ACC_STATE,
 	ASSIGN,
 	EQ,
+	LT,
+	LE,
+	GT,
+	GE,
+	NOT,
+	NE,
+	PLUS,
+	MINUS,
+	MULT,
+	DIV,
+	NOT_ACC_STATE,
+	AND,
+	NOT_ACC_STATE,
+	OR,
 	I_TOKEN
 };
 
@@ -185,6 +199,14 @@ struct c_list *findClasses(char symbol)
 	// 	This helps the user type out \n
 	if (symbol == '\n')
 		ADD_CLASS("\\n");
+	// If the symbol is a \t it belongs to the "\\t" class
+	// 	This helps the user type out \t
+	if (symbol == '\t')
+		ADD_CLASS("\\t");
+	// If the symbol is a space it belongs to the SPC class
+	// 	This helps the user type out spaces
+	if (symbol == ' ')
+		ADD_CLASS("SPC");
 	
 	curr_cl->next = NULL;
 	return cl;
