@@ -31,7 +31,7 @@ struct c_list {
 	struct c_list *next;
 };
 
-void destroy_c_list (struct c_list *cl)
+static void destroy_c_list (struct c_list *cl)
 {
 	struct c_list *next_cl;
 	while (cl != NULL){
@@ -43,7 +43,7 @@ void destroy_c_list (struct c_list *cl)
 
 // The Transition table
 // 	Each state is mapped to hash-table that will map the input symbol to the next state
-struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
+static struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
 
 // The Accept table
 // 	Denotes whether each state is an accept state or not
@@ -128,10 +128,10 @@ static enum token_type accept_table[] = {
 	I_TOKEN
 };
 
-struct c_list *findClasses(char input_symbol);
+static struct c_list *findClasses(char input_symbol);
 
 // The hash function for the hash tables
-int hash(char *s)
+static int hash(char *s)
 {
 	int hash_val;
 	for (hash_val = 0; *s != '\0'; s++)
@@ -140,7 +140,7 @@ int hash(char *s)
 }
 
 // Function to look for transition that matches the input symbol
-struct t_list *lookup(int state, char *input_symbol)
+static struct t_list *lookup(int state, char *input_symbol)
 {
 	struct t_list *tl;
 	for (tl = lex_table[state][hash(input_symbol)]; tl != NULL; tl = tl->next)
@@ -150,7 +150,7 @@ struct t_list *lookup(int state, char *input_symbol)
 }
 
 // Function to insert a transition to the DFA transition table
-struct t_list *insert(int current_state, char *input_symbol, int next_state)
+static struct t_list *insert(int current_state, char *input_symbol, int next_state)
 {
 	struct t_list *tl;
 	int hash_val;
@@ -234,7 +234,7 @@ enum token_type accept (int current_state)
 }
 
 
-struct c_list *findClasses(char symbol)
+static struct c_list *findClasses(char symbol)
 {
 	// Find the character-classes a symbol belongs to
 	// Note: While multiple transitions on the same input symbol are not allowed,

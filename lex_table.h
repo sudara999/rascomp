@@ -1,6 +1,8 @@
 #ifndef LEX_TABLE
 #define LEX_TABLE
 
+#include "lexer.h"
+
 #define TABLE_SRC "lex_table.txt" 
 
 int create_lex_table();
