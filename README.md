@@ -1,6 +1,32 @@
 # CSE 304 Project
 
-This is a simple compiler for the language 'rascl'
+This is a simple compiler for the language 'rascl'.
+
+## Table of Contents
+
+- [CSE 304 Project](#cse-304-project)
+  * [Phase 1: Lexical Analysis](#phase-1-lexical-analysis)
+    + [Lexical Analyser functions](#lexical-analyser-functions)
+      - [int initLexer(char *filename);](#int-initlexer-char--filename--)
+      - [int getNextToken(struct token *nextToken);](#int-getnexttoken-struct-token--nexttoken--)
+    + [Lexical Analyser data structures](#lexical-analyser-data-structures)
+      - [Tokens](#tokens)
+    + [How the lexical analyser works](#how-the-lexical-analyser-works)
+    + [Testing the lexical analyser](#testing-the-lexical-analyser)
+    + [Future Features](#future-features)
+  * [Phase 2: Symbol Table Manager](#phase-2-symbol-table-manager)
+    + [Symbol Table functions](#symbol-table-functions)
+      - [void initSymTab ();](#void-initsymtab----)
+      - [int newScope ();](#int-newscope----)
+      - [void exitScope ();](#void-exitscope----)
+      - [int addSymbol (char *identifier)](#int-addsymbol--char--identifier-)
+      - [int addAttributeToSymbol (char *identifier, int scope, int attribute, void *value);](#int-addattributetosymbol--char--identifier--int-scope--int-attribute--void--value--)
+      - [int symbolInTable (char *identifier, int scope);](#int-symbolintable--char--identifier--int-scope--)
+      - [struct symbol *getSymbol (char *identifier, int scope);](#struct-symbol--getsymbol--char--identifier--int-scope--)
+    + [Symbol Table data structures](#symbol-table-data-structures)
+      - [Symbols](#symbols)
+      - [The Symbol Table](#the-symbol-table)
+    + [Testing the Symbol Table](#testing-the-symbol-table)
 
 ## Phase 1: Lexical Analysis
 
