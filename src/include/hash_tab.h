@@ -1,6 +1,9 @@
 #ifndef HASH_TAB
 #define HASH_TAB
 
+#define NO_DUP 0
+#define HAS_DUP 1
+
 struct hash_list {
 	struct hash_list *next;
 	void *key;
@@ -32,7 +35,11 @@ void *lookup (struct hash_tab *hash_table, void *key);
 
 // Insert a key-value pair
 // Returns the previous value of the key
-void *insert (struct hash_tab *hash_table, void *key, void *value);
+void *insert (struct hash_tab *hash_table, void *key, void *value, int flag);
+
+// Get the hash_list structure that maps a specific key to a value
+// NULL is returned if the key-value pair does not exist
+struct hash_list *get_map (struct hash_tab *hash_table, void *key);
 
 // Functions that can be used depending on the type of the hash table
 //

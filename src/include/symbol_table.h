@@ -1,9 +1,11 @@
 #ifndef SYM_TAB
 #define SYM_TAB
 
-#include "lexer.h"	// for SUCC and FAIL
+#include <compiler_api.h>	// for SUCC and FAIL and MAX_TOKEN_LEN
 
-#define GLOBAL 0	// Scope: Global Scope
+// Scopes
+#define LANG_DEF -1
+#define GLOBAL_SCOPE 0
 
 // Symbol Attributes are defined here
 // 	according to the order they are defined in struct symbol
@@ -13,9 +15,9 @@
 #define ATTR_OTHER 3 	// other information related to the attribute
 
 // Symbols for language defined data-types
-extern const struct symbol *sym_int;
-extern const struct symbol *sym_float;
-extern const struct symbol *sym_array;
+struct symbol *sym_int;
+struct symbol *sym_float;
+struct symbol *sym_array;
 
 // A symbol in the symbol table
 struct symbol {

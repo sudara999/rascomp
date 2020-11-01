@@ -1,9 +1,9 @@
 #ifndef LEX_TABLE
 #define LEX_TABLE
 
-#include "lexer.h"
+#include <lexer.h>	// for enum token_type
 
-#define TABLE_SRC "lex_table.txt" 
+#define TABLE_SRC "./src/lexer/lex_table.txt" 
 
 int create_lex_table();
 // Create the transition table for the DFA

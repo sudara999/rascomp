@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lexer.h" // Look here for the lexer API
-#include "lex_table.h" // lex_table.c will contain the DFA tables
+#include <compiler_api.h>
+#include <lexer.h> // Look here for the lexer API
+#include <lex_table.h> // lex_table.c will contain the DFA tables
 
 // The textual representations of the token-types
 static char *token_reps[] = {

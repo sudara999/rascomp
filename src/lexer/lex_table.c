@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "lexer.h"
-#include "lex_table.h"
+#include <compiler_api.h>
+#include <lexer.h>
+#include <lex_table.h>
 
 #define NUM_OF_STATES 66	// Number of states, excluding the error state
 #define	HASH_SIZE 11		// Hash-table size 

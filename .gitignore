@@ -1,2 +1,3 @@
-*.out
-rascl_lexer
+*.o
+*.d
+build/

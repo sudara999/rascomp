@@ -1,14 +1,14 @@
 # CSE 304 Project
 
-This is a simple compiler for the language 'rascl'.
+This is a simple compiler for the language ***rascl***, a small subset of C.
 
 ## Table of Contents
 
 - [CSE 304 Project](#cse-304-project)
   * [Phase 1: Lexical Analysis](#phase-1-lexical-analysis)
     + [Lexical Analyser functions](#lexical-analyser-functions)
-      - [int initLexer(char *filename);](#int-initlexer-char--filename--)
-      - [int getNextToken(struct token *nextToken);](#int-getnexttoken-struct-token--nexttoken--)
+      - [int initLexer(char *filename);](#int-initlexerchar-filename)
+      - [int getNextToken(struct token *nextToken);](#int-getnexttokenstruct-token-nexttoken)
     + [Lexical Analyser data structures](#lexical-analyser-data-structures)
       - [Tokens](#tokens)
     + [How the lexical analyser works](#how-the-lexical-analyser-works)
@@ -16,13 +16,13 @@ This is a simple compiler for the language 'rascl'.
     + [Future Features](#future-features)
   * [Phase 2: Symbol Table Manager](#phase-2-symbol-table-manager)
     + [Symbol Table functions](#symbol-table-functions)
-      - [void initSymTab ();](#void-initsymtab----)
-      - [int newScope ();](#int-newscope----)
-      - [void exitScope ();](#void-exitscope----)
-      - [int addSymbol (char *identifier)](#int-addsymbol--char--identifier-)
-      - [int addAttributeToSymbol (char *identifier, int scope, int attribute, void *value);](#int-addattributetosymbol--char--identifier--int-scope--int-attribute--void--value--)
-      - [int symbolInTable (char *identifier, int scope);](#int-symbolintable--char--identifier--int-scope--)
-      - [struct symbol *getSymbol (char *identifier, int scope);](#struct-symbol--getsymbol--char--identifier--int-scope--)
+      - [void initSymTab ();](#void-initsymtab)
+      - [int newScope ();](#int-newscope)
+      - [void exitScope ();](#void-exitscope)
+      - [int addSymbol (char *identifier)](#int-addsymbol-char-identifier)
+      - [int addAttributeToSymbol (char *identifier, int scope, int attribute, void *value);](#int-addattributetosymbol-char-identifier-int-scope-int-attribute-void-value)
+      - [int symbolInTable (char *identifier, int scope);](#int-symbolintable-char-identifier-int-scope)
+      - [struct symbol *getSymbol (char *identifier, int scope);](#struct-symbol-getsymbol-char-identifier-int-scope)
     + [Symbol Table data structures](#symbol-table-data-structures)
       - [Symbols](#symbols)
       - [The Symbol Table](#the-symbol-table)
@@ -30,11 +30,11 @@ This is a simple compiler for the language 'rascl'.
 
 ## Phase 1: Lexical Analysis
 
-The lexical analyser is implemented in lexer.c
+The lexical analyser is implemented in `lexer.c`.
 
 ### Lexical Analyser functions
 
-The lexical analyser, lexer.c, contains the following the function calls:
+The lexical analyser, `lexer.c`, contains the following the function calls:
 
 #### int initLexer(char *filename);
 
@@ -82,21 +82,21 @@ The source file will be read line-by-line and scanned for tokens. The tokens are
 
 ### Testing the lexical analyser
 
-The program testLexer.c will use lexer.c to get tokens from the test file, testLexer.txt.
+The program `testLexer.c` will use `lexer.c` to get tokens from the test file, `testLexer.txt`.
 
 ### Future Features
 
-+ A function `destroy_lex_table()` to destroy the hash-table created in lex_table.c. This function will free up memory that is not being used.
++ A function `destroy_lex_table()` to destroy the hash-table created in `lex_table.c`. This function will free up memory that is not being used.
 
 ## Phase 2: Symbol Table Manager
 
-The symbol-table manager is implemented in symbol_table.c.
+The symbol-table manager is implemented in `symbol_table.c`.
 
 ### Symbol Table functions
 
 #### void initSymTab ();
 
-Initialises the symbol table. Also creates the language-defined data-types (for example, int) as symbols in the table.
+Initialises the symbol table. Also creates the language-defined data-types (for example, `int`) as symbols in the table.
 
 #### int newScope ();
 
@@ -110,7 +110,7 @@ Reverts the current scope to the global scope (0).
 
 #### int addSymbol (char *identifier)
 
-Adds a symbol with the name identifier to the symbol-table. The scope of the added symbol can be found in the variable `int last_used_scope` defined in symbol_table.c.
+Adds a symbol with the name identifier to the symbol-table. The scope of the symbol depends on the scope that is entered by calling `newScope()` or `exitScope()`. If there is a symbol with the same identifier in the scope, the symbol is not added and `FAIL` is returned.
 
 Returns `SUCC` if added successfully; otherwise returns `FAIL`.
 
@@ -128,7 +128,7 @@ Returns `SUCC` if the symbol exists, otherwise returns `FAIL`.
 
 #### struct symbol *getSymbol (char *identifier, int scope);
 
-Returns the symbol with the specified identifier at the scope specified. Otherwise, returns `NULL`.
+Returns the symbol with the specified identifier at the scope specified. If the symbol is not defined in the specified scope, it is searched in the global scope. Otherwise returns `NULL` if the symbol is not found.
 
 ### Symbol Table data structures
 
@@ -156,9 +156,8 @@ They have the following members:
 
 #### The Symbol Table
 
-The symbol table is stored as a hash-table called `symbol_table`. The implementation of the hash-table can be found in the file hash_tab.c.
+The symbol table is stored as a hash-table called `symbol_table`. The implementation of the hash-table can be found in the file `hash_tab.c`.
 
 ### Testing the Symbol Table
 
-The program testSymbolTable.c will test the Symbol Table functions implemented in symbol_table.c.
- 
+The program `testSymbolTable.c` will test the Symbol Table functions implemented in `symbol_table.c`. Run `make` in the root of the project directory to compile the symbol-table manager tester, `test_symbol_table`.

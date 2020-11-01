@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.h"
+#include <compiler_api.h>
+#include <lexer.h>
 
 int main(){
-	char filename[] = "./testLexer.txt";
+	char filename[] = "./tests/lexer/testLexer.txt";
 	if (initLexer(filename) == SUCC) {
 		struct token *token = malloc(sizeof(struct token));
 		// ! error handling

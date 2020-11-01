@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "hash_tab.h"
+#include <hash_tab.h>
 
 // Functions to manage a hash_table
 //
@@ -37,7 +37,7 @@ void destroy_hash_tab (struct hash_tab *hash_table)
 
 // Get the hash_list structure that maps a specific key to a value
 // NULL is returned if the key-value pair does not exist
-static struct hash_list *get_map (struct hash_tab *hash_table, void *key)
+struct hash_list *get_map (struct hash_tab *hash_table, void *key)
 {	
 	for (struct hash_list *hl = 
 			hash_table->table[hash_table->hash(key, hash_table->size)];
@@ -58,14 +58,36 @@ void *lookup (struct hash_tab *hash_table, void *key)
 
 
 // Insert a key-value pair
-// Returns the previous value of the key
-void *insert (struct hash_tab *hash_table, void *key, void *value)
+// if flag is NO_DUP
+// 	returns the previous value of the key if there is a duplicate
+// 	else returns NULL
+// if flag is HAS_DUP
+// 	inserts the key-value pair at the end of the chain of pairs that have the same key
+// 	always returns NULL
+void *insert (struct hash_tab *hash_table, void *key, void *value, int flag)
 {
 	struct hash_list *map;
+	struct hash_list *new_map;
 	if ((map = get_map(hash_table, key)) != NULL){
-		void *old_value = map->value;
-		map->value = value;
-		return old_value;
+		if (flag == NO_DUP) {
+			void *old_value = map->value;
+			map->value = value;
+			return old_value;
+		} else {
+			for (struct hash_list *next_map = map->next;
+					next_map != NULL;
+					next_map = next_map->next) 
+				if (hash_table->compare(key, next_map->key) == 0)
+					map = next_map;	
+				else
+					break;
+			new_map = malloc(sizeof(struct hash_list));
+			new_map->key = key;
+			new_map->value = value;
+			new_map->next = map->next;
+			map->next = new_map;
+			return NULL;
+		}
 	}
 	else {
 		unsigned int hash_val = hash_table->hash(key, hash_table->size);
