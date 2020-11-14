@@ -160,4 +160,56 @@ The symbol table is stored as a hash-table called `symbol_table`. The implementa
 
 ### Testing the Symbol Table
 
-The program `testSymbolTable.c` will test the Symbol Table functions implemented in `symbol_table.c`. Run `make` in the root of the project directory to compile the symbol-table manager tester, `test_symbol_table`.
+The program `testSymbolTable.c` will test the Symbol Table functions implemented in `symbol_table.c`. Run `make tests` in the root of the project directory to compile the symbol-table manager tester, `build/test_symbol_table`.
+
+## Phase 3: Parser
+
+The parser is implemented as a recursive descent parser. The parser can be found in `src/parser/parser.c`. The header file for the parser, `src/include/parser.h`, defines the macros that can be used to create CFG rules for the parser. The rules to parse rascl code can be found in `src/parser/rascl_syntax.c`.
+
+### Parser functions
+
+#### Non-terminals(NT)
+
+Each non-terminal(NT) in the grammar is defined as a function.
+
+##### Return values
+
+The return value of the the NT can be:
+  1. PROGRESS
+  2. FALLBACK
+  3. ROLLBACK
+
+The return value informs the calling NT about the action it should take.
+
+##### Behavior
+
+The NT function checks whether the next token will be matched by one of the NT's productions. The productions are checked in sequence as described below:
+
+Check whether the 1st symbol in the production can match the next token. If the 1st symbol matches, *progress* to the next symbol in the production after logging the productions that led to the match. Otherwise, if the 1st symbol did not match, *fallback* to the next production and repeat. If there was an error detected, *rollback* to the last non-terminal.
+
+If one of the productions had a start symbol that matched the token, the next symbols in the production would be matched and logged on *progress*. This would continue till the end of the production is reached and the calling NT would be informed to *progress*. If a symbol is not matched after the starting symbol of a production has already been matched, there is no *fallback*; the function can only *rollback* to the calling NT because an error is detected.
+
+##### Macros
+
+Macros are used to define the NT functions. The example below shows how to create a non-terminal called `name` with a single production rule to match the ID token: 
+
+```C
+DEF_NT(name)
+  START_T(ID, "name -> ID.\n", END_P)
+END_NT
+```
+
+`DEF_NT` marks the start of the function that represents the non-terminal `name`. `END_NT` marks the end of the function. All the productions of the non-terminal should go between these two macros.
+
+`START_T()` and `START_NT()` create production rules for the non-terminal that it is in. `START_T()` is used when the production starts with a terminal. If the production starts with a non-terminal `START_NT()` is used. In the example shown above, `ID` is a terminal, so `START_T()` is used to start the production. The first symbol of the production is entered as the first argument of the macro. The second argument is the string representation of the derivation of the production when the terminal `ID` is read. The third argument should be a macro denoting the rest of the production. In this case the production has no more symbols, so `END_P` is used to mark the end of the production.
+
+Please refer to   `src/parser/rascl_syntax.c` for more examples.
+
+### Testing the symbol Table
+
+Run `make` or `make parser` in the root of the project directory to build the parser `build/parser`. To test the parser, run the parser with one of the test programs in `test/parser/testsuite/`. The test-programs have .rsc extensions and the parser will produce .rsc.log files as output. The parser needs to be executed from the root of the directory to work properly. The log files will be created in the same folder as the source file. For example, to parse a .rsc file and see its output you would enter the following commands at the root of the project folder in sequence:
+```
+make parser
+./build/parser ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc
+cat ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc.log
+```

@@ -1,0 +1,769 @@
+| PARSE() -> .START
+   | START -> .program
+       | program -> .decllist funcdecls bstatementlist DD
+           | decllist -> .decl decllist
+               | decl -> .typespec variablelist
+                   | typespec -> INT.
+                   * Keyword:INT
+               | decl -> typespec .variablelist
+                   | variablelist -> .variable variablelisttail
+                       | variable -> ID. variabletail
+                       * ID:a
+                       | variable -> ID .variabletail
+                           | variabletail -> .arraydim
+                               | arraydim -> e.
+                   | variablelist -> variable .variablelisttail
+                       | variablelisttail -> SEMICOLON.
+                       * SEMICOLON
+           | decllist -> decl .decllist
+               | decllist -> .decl decllist
+                   | decl -> .typespec variablelist
+                       | typespec -> INT.
+                       * Keyword:INT
+                   | decl -> typespec .variablelist
+                       | variablelist -> .variable variablelisttail
+                           | variable -> ID. variabletail
+                           * ID:b
+                           | variable -> ID .variabletail
+                               | variabletail -> .arraydim
+                                   | arraydim -> e.
+                       | variablelist -> variable .variablelisttail
+                           | variablelisttail -> SEMICOLON.
+                           * SEMICOLON
+               | decllist -> decl .decllist
+                   | decllist -> .decl decllist
+                       | decl -> .typespec variablelist
+                           | typespec -> INT.
+                           * Keyword:INT
+                       | decl -> typespec .variablelist
+                           | variablelist -> .variable variablelisttail
+                               | variable -> ID. variabletail
+                               * ID:bignum
+                               | variable -> ID .variabletail
+                                   | variabletail -> .arraydim
+                                       | arraydim -> e.
+                           | variablelist -> variable .variablelisttail
+                               | variablelisttail -> SEMICOLON.
+                               * SEMICOLON
+                   | decllist -> decl .decllist
+                       | decllist -> .decl decllist
+                           | decl -> .typespec variablelist
+                               | typespec -> INT.
+                               * Keyword:INT
+                           | decl -> typespec .variablelist
+                               | variablelist -> .variable variablelisttail
+                                   | variable -> ID. variabletail
+                                   * ID:sqr
+                                   | variable -> ID .variabletail
+                                       | variabletail -> .arraydim
+                                           | arraydim -> e.
+                               | variablelist -> variable .variablelisttail
+                                   | variablelisttail -> SEMICOLON.
+                                   * SEMICOLON
+                       | decllist -> decl .decllist
+                           | decllist -> .decl decllist
+                               | decl -> .typespec variablelist
+                                   | typespec -> FLOAT.
+                                   * Keyword:FLOAT
+                               | decl -> typespec .variablelist
+                                   | variablelist -> .variable variablelisttail
+                                       | variable -> ID. variabletail
+                                       * ID:avg
+                                       | variable -> ID .variabletail
+                                           | variabletail -> .arraydim
+                                               | arraydim -> e.
+                                   | variablelist -> variable .variablelisttail
+                                       | variablelisttail -> SEMICOLON.
+                                       * SEMICOLON
+                           | decllist -> decl .decllist
+                               | decllist -> .decl decllist
+                                   | decl -> .typespec variablelist
+                                       | typespec -> INT.
+                                       * Keyword:INT
+                                   | decl -> typespec .variablelist
+                                       | variablelist -> .variable variablelisttail
+                                           | variable -> ID. variabletail
+                                           * ID:numbers
+                                           | variable -> ID .variabletail
+                                               | variabletail -> .arraydim
+                                                   | arraydim -> LBRACKET. arraydimtail
+                                                   * LBRACKET
+                                                   | arraydim -> LBRACKET .arraydimtail
+                                                       | arraydimtail -> ICONST. RBRACKET arraydim
+                                                       * ICONST:5
+                                                       | arraydimtail -> ICONST RBRACKET. arraydim
+                                                       * RBRACKET
+                                                       | arraydimtail -> ICONST RBRACKET .arraydim
+                                                           | arraydim -> e.
+                                       | variablelist -> variable .variablelisttail
+                                           | variablelisttail -> SEMICOLON.
+                                           * SEMICOLON
+                               | decllist -> decl .decllist
+                                   | decllist -> .decl decllist
+                                       | decl -> .typespec variablelist
+                                           | typespec -> INT.
+                                           * Keyword:INT
+                                       | decl -> typespec .variablelist
+                                           | variablelist -> .variable variablelisttail
+                                               | variable -> ID. variabletail
+                                               * ID:even
+                                               | variable -> ID .variabletail
+                                                   | variabletail -> .arraydim
+                                                       | arraydim -> e.
+                                           | variablelist -> variable .variablelisttail
+                                               | variablelisttail -> SEMICOLON.
+                                               * SEMICOLON
+                                   | decllist -> decl .decllist
+                                       | decllist -> .decl decllist
+                                           | decl -> .typespec variablelist
+                                               | typespec -> INT.
+                                               * Keyword:INT
+                                           | decl -> typespec .variablelist
+                                               | variablelist -> .variable variablelisttail
+                                                   | variable -> ID. variabletail
+                                                   * ID:index
+                                                   | variable -> ID .variabletail
+                                                       | variabletail -> .arraydim
+                                                           | arraydim -> e.
+                                               | variablelist -> variable .variablelisttail
+                                                   | variablelisttail -> SEMICOLON.
+                                                   * SEMICOLON
+                                       | decllist -> decl .decllist
+                                           | decllist -> e.
+       | program -> decllist .funcdecls bstatementlist DD
+           | funcdecls -> .funcdecl funcdecls
+               | funcdecl -> FUNCTION. ftypespec simplevar fdeclparms decllist fbstatementlist
+               * Keyword:FUNCTION
+               | funcdecl -> FUNCTION .ftypespec simplevar fdeclparms decllist fbstatementlist
+                   | ftypespec -> INT.
+                   * Keyword:INT
+               | funcdecl -> FUNCTION ftypespec .simplevar fdeclparms decllist fbstatementlist
+                   | simplevar -> ID.
+                   * ID:isEven
+               | funcdecl -> FUNCTION ftypespec simplevar .fdeclparms decllist fbstatementlist
+                   | fdeclparms -> LPAREN. fparmlist RPAREN
+                   * LPAREN
+                   | fdeclparms -> LPAREN .fparmlist RPAREN
+                       | fparmlist -> .fparm fparmlistrem
+                           | fparm -> .typespec parmVar
+                               | typespec -> INT.
+                               * Keyword:INT
+                           | fparm -> typespec .parmVar
+                               | parmVar -> ID. parmVarTail
+                               * ID:val
+                               | parmVar -> ID .parmVarTail
+                                   | parmVarTail -> e.
+                       | fparmlist -> fparm .fparmlistrem
+                           | fparmlistrem -> e.
+                   | fdeclparms -> LPAREN fparmlist RPAREN.
+                   * RPAREN
+               | funcdecl -> FUNCTION ftypespec simplevar fdeclparms .decllist fbstatementlist
+                   | decllist -> e.
+               | funcdecl -> FUNCTION ftypespec simplevar fdeclparms decllist .fbstatementlist
+                   | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                   * LBRACE
+                   | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                       | fstatementlist -> .fstatement fstatementlist
+                           | fstatement -> .fifstatement statementtail
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                               * Keyword:IF
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                               * LPAREN
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                   | relationalexpr -> .condexpr relationalexprtail
+                                       | condexpr -> .otherexpression condexprtail
+                                           | otherexpression -> .term otherexpressiontail
+                                               | term -> .factor termtail
+                                                   | factor -> ID. factortail
+                                                   * ID:val
+                                                   | factor -> ID .factortail
+                                                       | factortail -> .variabletail
+                                                           | variabletail -> .arraydim
+                                                               | arraydim -> e.
+                                               | term -> factor .termtail
+                                                   | termtail -> e.
+                                           | otherexpression -> term .otherexpressiontail
+                                               | otherexpressiontail => e.
+                                       | condexpr -> otherexpression .condexprtail
+                                           | condexprtail -> EQ. otherexpression
+                                           * EQ
+                                           | condexprtail -> EQ .otherexpression
+                                               | otherexpression -> .term otherexpressiontail
+                                                   | term -> .factor termtail
+                                                       | factor -> ICONST.
+                                                       * ICONST:0
+                                                   | term -> factor .termtail
+                                                       | termtail -> e.
+                                               | otherexpression -> term .otherexpressiontail
+                                                   | otherexpressiontail => e.
+                                   | relationalexpr -> condexpr .relationalexprtail
+                                       | relationalexprtail -> e.
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                               * RPAREN
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                   | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                                   * LBRACE
+                                   | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                                       | fstatementlist -> .fstatement fstatementlist
+                                           | fstatement -> .returnstatement
+                                               | returnstatement -> RETURN. returnexpression SEMICOLON
+                                               * Keyword:RETURN
+                                               | returnstatement -> RETURN .returnexpression SEMICOLON
+                                                   | returnexpression -> .otherexpression
+                                                       | otherexpression -> .term otherexpressiontail
+                                                           | term -> .factor termtail
+                                                               | factor -> ICONST.
+                                                               * ICONST:1
+                                                           | term -> factor .termtail
+                                                               | termtail -> e.
+                                                       | otherexpression -> term .otherexpressiontail
+                                                           | otherexpressiontail => e.
+                                               | returnstatement -> RETURN returnexpression SEMICOLON.
+                                               * SEMICOLON
+                                       | fstatementlist -> fstatement .fstatementlist
+                                           | fstatementlist -> e.
+                                   | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                                   * RBRACE
+                               | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                   | fiftail -> ELSE. fbstatementlist
+                                   * Keyword:ELSE
+                                   | fiftail -> ELSE .fbstatementlist
+                                       | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                                       * LBRACE
+                                       | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                                           | fstatementlist -> .fstatement fstatementlist
+                                               | fstatement -> .fifstatement statementtail
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                   * Keyword:IF
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                   * LPAREN
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                       | relationalexpr -> .condexpr relationalexprtail
+                                                           | condexpr -> .otherexpression condexprtail
+                                                               | otherexpression -> .term otherexpressiontail
+                                                                   | term -> .factor termtail
+                                                                       | factor -> ID. factortail
+                                                                       * ID:val
+                                                                       | factor -> ID .factortail
+                                                                           | factortail -> .variabletail
+                                                                               | variabletail -> .arraydim
+                                                                                   | arraydim -> e.
+                                                                   | term -> factor .termtail
+                                                                       | termtail -> e.
+                                                               | otherexpression -> term .otherexpressiontail
+                                                                   | otherexpressiontail => e.
+                                                           | condexpr -> otherexpression .condexprtail
+                                                               | condexprtail -> EQ. otherexpression
+                                                               * EQ
+                                                               | condexprtail -> EQ .otherexpression
+                                                                   | otherexpression -> .term otherexpressiontail
+                                                                       | term -> .factor termtail
+                                                                           | factor -> ICONST.
+                                                                           * ICONST:1
+                                                                       | term -> factor .termtail
+                                                                           | termtail -> e.
+                                                                   | otherexpression -> term .otherexpressiontail
+                                                                       | otherexpressiontail => e.
+                                                       | relationalexpr -> condexpr .relationalexprtail
+                                                           | relationalexprtail -> e.
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                   * RPAREN
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                       | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                                                       * LBRACE
+                                                       | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                                                           | fstatementlist -> .fstatement fstatementlist
+                                                               | fstatement -> .returnstatement
+                                                                   | returnstatement -> RETURN. returnexpression SEMICOLON
+                                                                   * Keyword:RETURN
+                                                                   | returnstatement -> RETURN .returnexpression SEMICOLON
+                                                                       | returnexpression -> .otherexpression
+                                                                           | otherexpression -> .term otherexpressiontail
+                                                                               | term -> .factor termtail
+                                                                                   | factor -> ICONST.
+                                                                                   * ICONST:0
+                                                                               | term -> factor .termtail
+                                                                                   | termtail -> e.
+                                                                           | otherexpression -> term .otherexpressiontail
+                                                                               | otherexpressiontail => e.
+                                                                   | returnstatement -> RETURN returnexpression SEMICOLON.
+                                                                   * SEMICOLON
+                                                           | fstatementlist -> fstatement .fstatementlist
+                                                               | fstatementlist -> e.
+                                                       | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                                                       * RBRACE
+                                                   | fifstatement -> IF. LPAREN relationalexpr RPAREN fbstatementlist fiftail
+                                                       | fiftail -> ELSE. fbstatementlist
+                                                       * Keyword:ELSE
+                                                       | fiftail -> ELSE .fbstatementlist
+                                                           | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                                                           * LBRACE
+                                                           | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                                                               | fstatementlist -> .fstatement fstatementlist
+                                                                   | fstatement -> .returnstatement
+                                                                       | returnstatement -> RETURN. returnexpression SEMICOLON
+                                                                       * Keyword:RETURN
+                                                                       | returnstatement -> RETURN .returnexpression SEMICOLON
+                                                                           | returnexpression -> .otherexpression
+                                                                               | otherexpression -> .term otherexpressiontail
+                                                                                   | term -> .factor termtail
+                                                                                       | factor -> ID. factortail
+                                                                                       * ID:isEven
+                                                                                       | factor -> ID .factortail
+                                                                                           | factortail -> .funccalltail
+                                                                                               | funccalltail -> LPAREN. arglist RPAREN
+                                                                                               * LPAREN
+                                                                                               | funccalltail -> LPAREN .arglist RPAREN
+                                                                                                   | arglist -> .arg arglistrem
+                                                                                                       | arg -> .otherexpression
+                                                                                                           | otherexpression -> .term otherexpressiontail
+                                                                                                               | term -> .factor termtail
+                                                                                                                   | factor -> ID. factortail
+                                                                                                                   * ID:val
+                                                                                                                   | factor -> ID .factortail
+                                                                                                                       | factortail -> .variabletail
+                                                                                                                           | variabletail -> .arraydim
+                                                                                                                               | arraydim -> e.
+                                                                                                               | term -> factor .termtail
+                                                                                                                   | termtail -> e.
+                                                                                                           | otherexpression -> term .otherexpressiontail
+                                                                                                               | otherexpressiontail -> MINUS. term otherexpressiontail
+                                                                                                               * MINUS
+                                                                                                               | otherexpressiontail -> MINUS .term otherexpressiontail
+                                                                                                                   | term -> .factor termtail
+                                                                                                                       | factor -> ICONST.
+                                                                                                                       * ICONST:2
+                                                                                                                   | term -> factor .termtail
+                                                                                                                       | termtail -> e.
+                                                                                                               | otherexpressiontail -> MINUS term .otherexpressiontail
+                                                                                                                   | otherexpressiontail => e.
+                                                                                                   | arglist -> arg .arglistrem
+                                                                                                       | arglistrem -> e.
+                                                                                               | funccalltail -> LPAREN arglist RPAREN.
+                                                                                               * RPAREN
+                                                                                   | term -> factor .termtail
+                                                                                       | termtail -> e.
+                                                                               | otherexpression -> term .otherexpressiontail
+                                                                                   | otherexpressiontail => e.
+                                                                       | returnstatement -> RETURN returnexpression SEMICOLON.
+                                                                       * SEMICOLON
+                                                               | fstatementlist -> fstatement .fstatementlist
+                                                                   | fstatementlist -> e.
+                                                           | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                                                           * RBRACE
+                                               | fstatement -> .fifstatement statementtail
+                                                   | statementtail -> e.
+                                           | fstatementlist -> fstatement .fstatementlist
+                                               | fstatementlist -> e.
+                                       | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                                       * RBRACE
+                           | fstatement -> .fifstatement statementtail
+                               | statementtail -> e.
+                       | fstatementlist -> fstatement .fstatementlist
+                           | fstatementlist -> e.
+                   | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                   * RBRACE
+           | funcdecls -> funcdecl .funcdecls
+               | funcdecls -> .funcdecl funcdecls
+                   | funcdecl -> FUNCTION. ftypespec simplevar fdeclparms decllist fbstatementlist
+                   * Keyword:FUNCTION
+                   | funcdecl -> FUNCTION .ftypespec simplevar fdeclparms decllist fbstatementlist
+                       | ftypespec -> VOID.
+                       * Keyword:VOID
+                   | funcdecl -> FUNCTION ftypespec .simplevar fdeclparms decllist fbstatementlist
+                       | simplevar -> ID.
+                       * ID:outputArray
+                   | funcdecl -> FUNCTION ftypespec simplevar .fdeclparms decllist fbstatementlist
+                       | fdeclparms -> LPAREN. fparmlist RPAREN
+                       * LPAREN
+                       | fdeclparms -> LPAREN .fparmlist RPAREN
+                           | fparmlist -> .fparm fparmlistrem
+                               | fparm -> .typespec parmVar
+                                   | typespec -> INT.
+                                   * Keyword:INT
+                               | fparm -> typespec .parmVar
+                                   | parmVar -> ID. parmVarTail
+                                   * ID:nums
+                                   | parmVar -> ID .parmVarTail
+                                       | parmVarTail -> LBRACKET. RBRACKET parmVarTail
+                                       * LBRACKET
+                                       | parmVarTail -> LBRACKET RBRACKET. parmVarTail
+                                       * RBRACKET
+                                       | parmVarTail -> LBRACKET RBRACKET .parmVarTail
+                                           | parmVarTail -> e.
+                           | fparmlist -> fparm .fparmlistrem
+                               | fparmlistrem -> COMMA. fparm fparmlistrem
+                               * COMMA
+                               | fparmlistrem -> COMMA .fparm fparmlistrem
+                                   | fparm -> .typespec parmVar
+                                       | typespec -> INT.
+                                       * Keyword:INT
+                                   | fparm -> typespec .parmVar
+                                       | parmVar -> ID. parmVarTail
+                                       * ID:length
+                                       | parmVar -> ID .parmVarTail
+                                           | parmVarTail -> e.
+                               | fparmlistrem -> COMMA fparm .fparmlistrem
+                                   | fparmlistrem -> e.
+                       | fdeclparms -> LPAREN fparmlist RPAREN.
+                       * RPAREN
+                   | funcdecl -> FUNCTION ftypespec simplevar fdeclparms .decllist fbstatementlist
+                       | decllist -> e.
+                   | funcdecl -> FUNCTION ftypespec simplevar fdeclparms decllist .fbstatementlist
+                       | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                       * LBRACE
+                       | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                           | fstatementlist -> .fstatement fstatementlist
+                               | fstatement -> decl
+                                   | decl -> .typespec variablelist
+                                       | typespec -> INT.
+                                       * Keyword:INT
+                                   | decl -> typespec .variablelist
+                                       | variablelist -> .variable variablelisttail
+                                           | variable -> ID. variabletail
+                                           * ID:index
+                                           | variable -> ID .variabletail
+                                               | variabletail -> .arraydim
+                                                   | arraydim -> e.
+                                       | variablelist -> variable .variablelisttail
+                                           | variablelisttail -> SEMICOLON.
+                                           * SEMICOLON
+                           | fstatementlist -> fstatement .fstatementlist
+                               | fstatementlist -> .fstatement fstatementlist
+                                   | fstatement -> .assignmentexpression SEMICOLON
+                                       | assignmentexpression -> .variable ASSIGN otherexpression
+                                           | variable -> ID. variabletail
+                                           * ID:index
+                                           | variable -> ID .variabletail
+                                               | variabletail -> .arraydim
+                                                   | arraydim -> e.
+                                       | assignmentexpression -> variable ASSIGN. otherexpression
+                                       * ASSIGN
+                                       | assignmentexpression -> variable ASSIGN .otherexpression
+                                           | otherexpression -> .term otherexpressiontail
+                                               | term -> .factor termtail
+                                                   | factor -> ICONST.
+                                                   * ICONST:0
+                                               | term -> factor .termtail
+                                                   | termtail -> e.
+                                           | otherexpression -> term .otherexpressiontail
+                                               | otherexpressiontail => e.
+                                   | fstatement -> assignmentexpression SEMICOLON.
+                                   * SEMICOLON
+                               | fstatementlist -> fstatement .fstatementlist
+                                   | fstatementlist -> .fstatement fstatementlist
+                                       | fstatement -> .fwhilestatement statementtail
+                                           | fwhilestatement -> WHILE. LPAREN relationalexpr RPAREN fbstatementlist
+                                           * Keyword:WHILE
+                                           | fwhilestatement -> WHILE LPAREN. relationalexpr RPAREN fbstatementlist
+                                           * LPAREN
+                                           | fwhilestatement -> WHILE LPAREN .relationalexpr RPAREN fbstatementlist
+                                               | relationalexpr -> .condexpr relationalexprtail
+                                                   | condexpr -> .otherexpression condexprtail
+                                                       | otherexpression -> .term otherexpressiontail
+                                                           | term -> .factor termtail
+                                                               | factor -> ID. factortail
+                                                               * ID:index
+                                                               | factor -> ID .factortail
+                                                                   | factortail -> .variabletail
+                                                                       | variabletail -> .arraydim
+                                                                           | arraydim -> e.
+                                                           | term -> factor .termtail
+                                                               | termtail -> e.
+                                                       | otherexpression -> term .otherexpressiontail
+                                                           | otherexpressiontail => e.
+                                                   | condexpr -> otherexpression .condexprtail
+                                                       | condexprtail -> LT. otherexpression
+                                                       * LT
+                                                       | condexprtail -> LT .otherexpression
+                                                           | otherexpression -> .term otherexpressiontail
+                                                               | term -> .factor termtail
+                                                                   | factor -> ID. factortail
+                                                                   * ID:length
+                                                                   | factor -> ID .factortail
+                                                                       | factortail -> .variabletail
+                                                                           | variabletail -> .arraydim
+                                                                               | arraydim -> e.
+                                                               | term -> factor .termtail
+                                                                   | termtail -> e.
+                                                           | otherexpression -> term .otherexpressiontail
+                                                               | otherexpressiontail => e.
+                                               | relationalexpr -> condexpr .relationalexprtail
+                                                   | relationalexprtail -> e.
+                                           | fwhilestatement -> WHILE LPAREN relationalexpr RPAREN. fbstatementlist
+                                           * RPAREN
+                                           | fwhilestatement -> WHILE LPAREN relationalexpr RPAREN .fbstatementlist
+                                               | fbstatementlist -> LBRACE. fstatementlist RBRACE
+                                               * LBRACE
+                                               | fbstatementlist -> LBRACE .fstatementlist RBRACE
+                                                   | fstatementlist -> .fstatement fstatementlist
+                                                       | fstatement -> .printstatement SEMICOLON
+                                                           | printstatement -> PRINT. otherexpression
+                                                           * Keyword:PRINT
+                                                           | printstatement -> PRINT .otherexpression
+                                                               | otherexpression -> .term otherexpressiontail
+                                                                   | term -> .factor termtail
+                                                                       | factor -> LPAREN. otherexpression RPAREN
+                                                                       * LPAREN
+                                                                       | factor -> LPAREN .otherexpression RPAREN
+                                                                           | otherexpression -> .term otherexpressiontail
+                                                                               | term -> .factor termtail
+                                                                                   | factor -> ID. factortail
+                                                                                   * ID:nums
+                                                                                   | factor -> ID .factortail
+                                                                                       | factortail -> .variabletail
+                                                                                           | variabletail -> .arraydim
+                                                                                               | arraydim -> LBRACKET. arraydimtail
+                                                                                               * LBRACKET
+                                                                                               | arraydim -> LBRACKET .arraydimtail
+                                                                                                   | arraydimtail -> ID. RBRACKET arraydim
+                                                                                                   * ID:index
+                                                                                                   | arraydimtail -> ID RBRACKET. arraydim
+                                                                                                   * RBRACKET
+                                                                                                   | arraydimtail -> ID RBRACKET .arraydim
+                                                                                                       | arraydim -> e.
+                                                                               | term -> factor .termtail
+                                                                                   | termtail -> e.
+                                                                           | otherexpression -> term .otherexpressiontail
+                                                                               | otherexpressiontail => e.
+                                                                       | factor -> LPAREN otherexpression RPAREN.
+                                                                       * RPAREN
+                                                                   | term -> factor .termtail
+                                                                       | termtail -> e.
+                                                               | otherexpression -> term .otherexpressiontail
+                                                                   | otherexpressiontail => e.
+                                                       | fstatement -> printstatement SEMICOLON.
+                                                       * SEMICOLON
+                                                   | fstatementlist -> fstatement .fstatementlist
+                                                       | fstatementlist -> e.
+                                               | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                                               * RBRACE
+                                       | fstatement -> fwhilestatement .statementtail
+                                           | statementtail -> e.
+                                   | fstatementlist -> fstatement .fstatementlist
+                                       | fstatementlist -> e.
+                       | fbstatementlist -> LBRACE fstatementlist RBRACE.
+                       * RBRACE
+               | funcdecls -> funcdecl .funcdecls
+                   | funcdecls -> e.
+       | program -> decllist funcdecls .bstatementlist DD
+           | bstatementlist -> LBRACE. statementlist RBRACE
+           * LBRACE
+           | bstatementlist -> LBRACE .statementlist RBRACE
+               | statementlist -> .statement statementlist
+                   | statement -> .assignmentexpression SEMICOLON
+                       | assignmentexpression -> .variable ASSIGN otherexpression
+                           | variable -> ID. variabletail
+                           * ID:index
+                           | variable -> ID .variabletail
+                               | variabletail -> .arraydim
+                                   | arraydim -> e.
+                       | assignmentexpression -> variable ASSIGN. otherexpression
+                       * ASSIGN
+                       | assignmentexpression -> variable ASSIGN .otherexpression
+                           | otherexpression -> .term otherexpressiontail
+                               | term -> .factor termtail
+                                   | factor -> ICONST.
+                                   * ICONST:0
+                               | term -> factor .termtail
+                                   | termtail -> e.
+                           | otherexpression -> term .otherexpressiontail
+                               | otherexpressiontail => e.
+                   | statement -> assignmentexpression SEMICOLON.
+                   * SEMICOLON
+               | statementlist -> statement .statementlist
+                   | statementlist -> .statement statementlist
+                       | statement -> .assignmentexpression SEMICOLON
+                           | assignmentexpression -> .variable ASSIGN otherexpression
+                               | variable -> ID. variabletail
+                               * ID:even
+                               | variable -> ID .variabletail
+                                   | variabletail -> .arraydim
+                                       | arraydim -> e.
+                           | assignmentexpression -> variable ASSIGN. otherexpression
+                           * ASSIGN
+                           | assignmentexpression -> variable ASSIGN .otherexpression
+                               | otherexpression -> .term otherexpressiontail
+                                   | term -> .factor termtail
+                                       | factor -> ICONST.
+                                       * ICONST:0
+                                   | term -> factor .termtail
+                                       | termtail -> e.
+                               | otherexpression -> term .otherexpressiontail
+                                   | otherexpressiontail => e.
+                       | statement -> assignmentexpression SEMICOLON.
+                       * SEMICOLON
+                   | statementlist -> statement .statementlist
+                       | statementlist -> .statement statementlist
+                           | statement -> .assignmentexpression SEMICOLON
+                               | assignmentexpression -> .variable ASSIGN otherexpression
+                                   | variable -> ID. variabletail
+                                   * ID:numbers
+                                   | variable -> ID .variabletail
+                                       | variabletail -> .arraydim
+                                           | arraydim -> LBRACKET. arraydimtail
+                                           * LBRACKET
+                                           | arraydim -> LBRACKET .arraydimtail
+                                               | arraydimtail -> ICONST. RBRACKET arraydim
+                                               * ICONST:0
+                                               | arraydimtail -> ICONST RBRACKET. arraydim
+                                               * RBRACKET
+                                               | arraydimtail -> ICONST RBRACKET .arraydim
+                                                   | arraydim -> e.
+                               | assignmentexpression -> variable ASSIGN. otherexpression
+                               * ASSIGN
+                               | assignmentexpression -> variable ASSIGN .otherexpression
+                                   | otherexpression -> .term otherexpressiontail
+                                       | term -> .factor termtail
+                                           | factor -> ICONST.
+                                           * ICONST:50
+                                       | term -> factor .termtail
+                                           | termtail -> e.
+                                   | otherexpression -> term .otherexpressiontail
+                                       | otherexpressiontail => e.
+                           | statement -> assignmentexpression SEMICOLON.
+                           * SEMICOLON
+                       | statementlist -> statement .statementlist
+                           | statementlist -> .statement statementlist
+                               | statement -> .assignmentexpression SEMICOLON
+                                   | assignmentexpression -> .variable ASSIGN otherexpression
+                                       | variable -> ID. variabletail
+                                       * ID:numbers
+                                       | variable -> ID .variabletail
+                                           | variabletail -> .arraydim
+                                               | arraydim -> LBRACKET. arraydimtail
+                                               * LBRACKET
+                                               | arraydim -> LBRACKET .arraydimtail
+                                                   | arraydimtail -> ICONST. RBRACKET arraydim
+                                                   * ICONST:1
+                                                   | arraydimtail -> ICONST RBRACKET. arraydim
+                                                   * RBRACKET
+                                                   | arraydimtail -> ICONST RBRACKET .arraydim
+                                                       | arraydim -> e.
+                                   | assignmentexpression -> variable ASSIGN. otherexpression
+                                   * ASSIGN
+                                   | assignmentexpression -> variable ASSIGN .otherexpression
+                                       | otherexpression -> .term otherexpressiontail
+                                           | term -> .factor termtail
+                                               | factor -> MINUS. factor
+                                               * MINUS
+                                               | factor -> MINUS .factor
+                                                   | factor -> ICONST.
+                                                   * ICONST:52
+                                           | term -> factor .termtail
+                                               | termtail -> e.
+                                       | otherexpression -> term .otherexpressiontail
+                                           | otherexpressiontail => e.
+                               | statement -> assignmentexpression SEMICOLON.
+                               * SEMICOLON
+                           | statementlist -> statement .statementlist
+                               | statementlist -> .statement statementlist
+                                   | statement -> .assignmentexpression SEMICOLON
+                                       | assignmentexpression -> .variable ASSIGN otherexpression
+                                           | variable -> ID. variabletail
+                                           * ID:numbers
+                                           | variable -> ID .variabletail
+                                               | variabletail -> .arraydim
+                                                   | arraydim -> LBRACKET. arraydimtail
+                                                   * LBRACKET
+                                                   | arraydim -> LBRACKET .arraydimtail
+                                                       | arraydimtail -> ICONST. RBRACKET arraydim
+                                                       * ICONST:2
+                                                       | arraydimtail -> ICONST RBRACKET. arraydim
+                                                       * RBRACKET
+                                                       | arraydimtail -> ICONST RBRACKET .arraydim
+                                                           | arraydim -> e.
+                                       | assignmentexpression -> variable ASSIGN. otherexpression
+                                       * ASSIGN
+                                       | assignmentexpression -> variable ASSIGN .otherexpression
+                                           | otherexpression -> .term otherexpressiontail
+                                               | term -> .factor termtail
+                                                   | factor -> MINUS. factor
+                                                   * MINUS
+                                                   | factor -> MINUS .factor
+                                                       | factor -> ICONST.
+                                                       * ICONST:12
+                                               | term -> factor .termtail
+                                                   | termtail -> e.
+                                           | otherexpression -> term .otherexpressiontail
+                                               | otherexpressiontail => e.
+                                   | statement -> assignmentexpression SEMICOLON.
+                                   * SEMICOLON
+                               | statementlist -> statement .statementlist
+                                   | statementlist -> .statement statementlist
+                                       | statement -> .assignmentexpression SEMICOLON
+                                           | assignmentexpression -> .variable ASSIGN otherexpression
+                                               | variable -> ID. variabletail
+                                               * ID:numbers
+                                               | variable -> ID .variabletail
+                                                   | variabletail -> .arraydim
+                                                       | arraydim -> LBRACKET. arraydimtail
+                                                       * LBRACKET
+                                                       | arraydim -> LBRACKET .arraydimtail
+                                                           | arraydimtail -> ICONST. RBRACKET arraydim
+                                                           * ICONST:3
+                                                           | arraydimtail -> ICONST RBRACKET. arraydim
+                                                           * RBRACKET
+                                                           | arraydimtail -> ICONST RBRACKET .arraydim
+                                                               | arraydim -> e.
+                                           | assignmentexpression -> variable ASSIGN. otherexpression
+                                           * ASSIGN
+                                           | assignmentexpression -> variable ASSIGN .otherexpression
+                                               | otherexpression -> .term otherexpressiontail
+                                                   | term -> .factor termtail
+                                                       | factor -> ICONST.
+                                                       * ICONST:31
+                                                   | term -> factor .termtail
+                                                       | termtail -> e.
+                                               | otherexpression -> term .otherexpressiontail
+                                                   | otherexpressiontail => e.
+                                       | statement -> assignmentexpression SEMICOLON.
+                                       * SEMICOLON
+                                   | statementlist -> statement .statementlist
+                                       | statementlist -> .statement statementlist
+                                           | statement -> .assignmentexpression SEMICOLON
+                                               | assignmentexpression -> .variable ASSIGN otherexpression
+                                                   | variable -> ID. variabletail
+                                                   * ID:numbers
+                                                   | variable -> ID .variabletail
+                                                       | variabletail -> .arraydim
+                                                           | arraydim -> LBRACKET. arraydimtail
+                                                           * LBRACKET
+                                                           | arraydim -> LBRACKET .arraydimtail
+                                                               | arraydimtail -> ICONST. RBRACKET arraydim
+                                                               * ICONST:4
+                                                               | arraydimtail -> ICONST RBRACKET. arraydim
+                                                               * RBRACKET
+                                                               | arraydimtail -> ICONST RBRACKET .arraydim
+                                                                   | arraydim -> e.
+                                               | assignmentexpression -> variable ASSIGN. otherexpression
+                                               * ASSIGN
+                                               | assignmentexpression -> variable ASSIGN .otherexpression
+                                                   | otherexpression -> .term otherexpressiontail
+                                                       | term -> .factor termtail
+                                                           | factor -> MINUS. factor
+                                                           * MINUS
+                                                           | factor -> MINUS .factor
+                                                               | factor -> ICONST.
+                                                               * ICONST:17
+                                                       | term -> factor .termtail
+                                                           | termtail -> e.
+                                                   | otherexpression -> term .otherexpressiontail
+                                                       | otherexpressiontail => e.
+                                           | statement -> assignmentexpression SEMICOLON.
+                                           * SEMICOLON
+                                       | statementlist -> statement .statementlist
+                                           | statementlist -> .statement statementlist
+                                               | statement -> .assignmentexpression SEMICOLON
+                                                   | assignmentexpression -> .variable ASSIGN otherexpression
+                                                       | variable -> ID. variabletail
+                                                       * ID:outputArray
+                                                       | variable -> ID .variabletail
+                                                           | variabletail -> .arraydim
+                                                               | arraydim -> e.
+                                       | statementlist -> statement .statementlist
+                                           | statementlist -> e.
+ERROR!
+Last Lookahead: LPAREN
+Error reported at Depth: 0
+Maximum depth: 100

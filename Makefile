@@ -1,4 +1,4 @@
-.DEFAULT_GOAL = tests
+.DEFAULT_GOAL = parser
 
 # Set up the compiler and flags
 CC ?= gcc
@@ -14,6 +14,7 @@ get_objFdir = $(patsubst %.c,%.o,$(shell find $(1) -name '*.c'))
 LEX_OBJ = $(call get_objFdir, src/lexer)
 SYM_TAB_OBJ = $(call get_objFdir, src/symbol_table)
 HASH_TAB_OBJ = $(call get_objFdir, src/util)
+PARSER_OBJ = $(call get_objFdir, src/parser)
 
 .PHONY: debug1
 debug1:
@@ -35,7 +36,7 @@ include $(DEPS)
 VPATH += build
 
 .PHONY: tests
-tests: test_symbol_table test_hash_table test_lexer
+tests: test_symbol_table test_hash_table test_lexer test_parser
 
 test_symbol_table: tests/symbol_table/testSymbolTable.o $(SYM_TAB_OBJ) $(HASH_TAB_OBJ) | build
 	$(CC) $(CFLAGS) -o build/$@ $^
@@ -46,8 +47,16 @@ test_hash_table: tests/util/testHashtable.o $(HASH_TAB_OBJ) | build
 test_lexer: tests/lexer/testLexer.o $(LEX_OBJ) | build
 	$(CC) $(CFLAGS) -o build/$@ $^
 
+test_parser: tests/parser/testParser.o src/parser/parser.o $(LEX_OBJ) | build
+	$(CC) $(CFLAGS) -o build/$@ $^
+
 build:
 	mkdir $@
+
+# Create the parser
+
+parser: $(PARSER_OBJ) $(LEX_OBJ) | build 
+	$(CC) $(CFLAGS) -o build/$@ $^
 
 # Clean the files created by make
 .PHONY: clean

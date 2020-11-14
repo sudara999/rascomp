@@ -1,0 +1,89 @@
+| PARSE() -> .START
+   | START -> .program
+       | program -> .decllist funcdecls bstatementlist DD
+           | decllist -> .decl decllist
+               | decl -> .typespec variablelist
+                   | typespec -> INT.
+                   * Keyword:INT
+               | decl -> typespec .variablelist
+                   | variablelist -> .variable variablelisttail
+                       | variable -> ID. variabletail
+                       * ID:a
+                       | variable -> ID .variabletail
+                           | variabletail -> .arraydim
+                               | arraydim -> LBRACKET. arraydimtail
+                               * LBRACKET
+                               | arraydim -> LBRACKET .arraydimtail
+                                   | arraydimtail -> ICONST. RBRACKET arraydim
+                                   * ICONST:5
+                                   | arraydimtail -> ICONST RBRACKET. arraydim
+                                   * RBRACKET
+                                   | arraydimtail -> ICONST RBRACKET .arraydim
+                                       | arraydim -> e.
+                   | variablelist -> variable .variablelisttail
+                       | variablelisttail -> COMMA. variable variablelisttail
+                       * COMMA
+                       | variablelisttail -> COMMA .variable variablelisttail
+                           | variable -> ID. variabletail
+                           * ID:b
+                           | variable -> ID .variabletail
+                               | variabletail -> .arraydim
+                                   | arraydim -> e.
+                       | variablelisttail -> COMMA variable .variablelisttail
+                           | variablelisttail -> SEMICOLON.
+                           * SEMICOLON
+           | decllist -> decl .decllist
+               | decllist -> .decl decllist
+                   | decl -> .typespec variablelist
+                       | typespec -> FLOAT.
+                       * Keyword:FLOAT
+                   | decl -> typespec .variablelist
+                       | variablelist -> .variable variablelisttail
+                           | variable -> ID. variabletail
+                           * ID:c
+                           | variable -> ID .variabletail
+                               | variabletail -> .arraydim
+                                   | arraydim -> e.
+                       | variablelist -> variable .variablelisttail
+                           | variablelisttail -> COMMA. variable variablelisttail
+                           * COMMA
+                           | variablelisttail -> COMMA .variable variablelisttail
+                               | variable -> ID. variabletail
+                               * ID:d
+                               | variable -> ID .variabletail
+                                   | variabletail -> .arraydim
+                                       | arraydim -> LBRACKET. arraydimtail
+                                       * LBRACKET
+                                       | arraydim -> LBRACKET .arraydimtail
+                                           | arraydimtail -> ICONST. RBRACKET arraydim
+                                           * ICONST:4
+                                           | arraydimtail -> ICONST RBRACKET. arraydim
+                                           * RBRACKET
+                                           | arraydimtail -> ICONST RBRACKET .arraydim
+                                               | arraydim -> e.
+                           | variablelisttail -> COMMA variable .variablelisttail
+                               | variablelisttail -> SEMICOLON.
+                               * SEMICOLON
+               | decllist -> decl .decllist
+                   | decllist -> e.
+       | program -> decllist .funcdecls bstatementlist DD
+           | funcdecls -> e.
+       | program -> decllist funcdecls .bstatementlist DD
+           | bstatementlist -> LBRACE. statementlist RBRACE
+           * LBRACE
+           | bstatementlist -> LBRACE .statementlist RBRACE
+               | statementlist -> .statement statementlist
+                   | statement -> .assignmentexpression SEMICOLON
+                       | assignmentexpression -> .variable ASSIGN otherexpression
+                           | variable -> ID. variabletail
+                           * ID:a
+                           | variable -> ID .variabletail
+                               | variabletail -> .arraydim
+                                   | arraydim -> LBRACKET. arraydimtail
+                                   * LBRACKET
+                                   | arraydim -> LBRACKET .arraydimtail
+                                       | arraydimtail -> ICONST. RBRACKET arraydim
+                                       * ICONST:2
+ERROR: Syntax Error
+	Expected production: arraydimtail -> ICONST RBRACKET. arraydim
+	Lookahead: ASSIGN

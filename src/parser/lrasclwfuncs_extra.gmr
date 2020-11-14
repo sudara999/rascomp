@@ -1,0 +1,150 @@
+# TERMINALS
+
+SEMICOLON==>";"
+LBRACE==>"{" 
+RBRACE==>"}"
+COMMA==>","
+INT==>"int"
+FLOAT==>"float"
+ID==>"[a-zA-Z][a-zA-Z0-9]*"
+FUNCTION==>"function"
+ICONST==>"\d+"
+FCONST==>"\d+(.\d*)?"
+LBRACKET==>"["
+RBRACKET==>"]"
+PRINT==>"print"
+ASSIGN==>"="
+LPAREN==>"("
+RPAREN==>")"
+MULT==>"*"
+DIV==>"/"
+PLUS==>"+"
+MINUS==>"-"
+WHILE==>"while"
+IF==>"if"
+ELSE==>"else"
+NOT==>"!"
+AND==>"&&"
+OR==>"||"
+EQUAL==>"=="
+LT==>"<"
+LE==>"<="
+GT==>">"
+GE==>">="
+DD==>"$$"
+
+# Grammar
+
+## Start symbol is program
+program => decllist funcdecls bstatementlist DD
+
+## Declarations
+decllist => decl decllist
+decllist => e
+decl => typespec variablelist
+typespec => INT 
+typespec => FLOAT
+variablelist => variable variablelisttail
+variable => ID variabletail
+variabletail => arraydim
+arraydim => LBRACKET arraydimtail | e
+arraydimtail => ID RBRACKET arraydim
+arraydimtail => ICONST RBRACKET arraydim
+variablelisttail => COMMA variable variablelisttail
+variablelisttail => SEMICOLON
+
+## Statements
+bstatementlist => LBRACE statementlist RBRACE
+statementlist => statement statementlist
+statementlist => e
+statement => whilestatement statementtail
+statement => ifstatement statementtail
+statement => assignmentexpression SEMICOLON
+statement => printstatement SEMICOLON
+statement => readexpression SEMICOLON
+statementtail => SEMICOLON | e
+
+### Print and read
+printexpression => PRINT variable    # not used
+printstatement => PRINT otherexpression
+readexpression => READ variable
+
+### Assignment
+assignmentexpression => variable ASSIGN otherexpression
+otherexpression => term otherexpressiontail
+otherexpressiontail => PLUS term otherexpressiontail
+otherexpressiontail => MINUS term otherexpressiontail
+otherexpressiontail => e
+term => factor termtail
+termtail => MULT factor termtail
+termtail => DIV factor termtail
+termtail => e
+factor => ICONST
+factor => FCONST
+factor => LPAREN otherexpression RPAREN
+factor => MINUS factor
+factor => ID factortail
+factortail => funccalltail
+factortail => variabletail # important to do this last
+funccalltail => LPAREN arglist RPAREN
+arglist => arg arglistrem
+arglist => e
+arg => otherexpression
+arglistrem => COMMA arg arglistrem
+arglistrem => e
+
+### While
+whilestatement => WHILE LPAREN relationalexpr RPAREN whiletail
+relationalexpr => condexpr relationalexprtail
+relationalexprtail => AND condexpr
+relationalexprtail => OR condexpr
+relationalexprtail => e
+condexpr => LPAREN otherexpression condexprtail RPAREN
+condexpr => NOT condexpr
+condexpr => otherexpression condexprtail
+condexprtail => LT otherexpression
+condexprtail => LE otherexpression
+condexprtail => GT otherexpression
+condexprtail => GE otherexpression
+condexprtail => EQUAL otherexpression
+whiletail => compoundstatement
+compoundstatement => LBRACE statementlist RBRACE
+
+### If
+ifstatement => IF LPAREN relationalexpr RPAREN compoundstatement iftail
+iftail => ELSE compoundstatement
+iftail => e
+
+## Functions
+funcdecls => funcdecl funcdecls
+funcdecls => e
+funcdecl => FUNCTION ftypespec simplevar fdeclparms decllist fbstatementlist
+ftypespec => VOID | INT | FLOAT
+simplevar => ID
+fdeclparms => LPAREN fparmlist RPAREN
+fparmlist => fparm fparmlistrem
+fparmlist => e
+fparm => typespec parmVar
+parmVar => ID parmVarTail
+parmVarTail => LBRACKET RBRACKET parmVarTail
+parmVarTail => e
+fparmlistrem => COMMA fparm fparmlistrem
+fparmlistrem => e
+
+### Function statements
+fbstatementlist => LBRACE fstatementlist RBRACE
+fstatementlist => fstatement fstatementlist
+fstatementlist => e
+fstatement => returnstatement
+fstatement => fwhilestatement statementtail
+fstatement => fifstatement statementtail
+fstatement => assignmentexpression SEMICOLON
+fstatement => printstatement SEMICOLON
+fstatement => readexpression SEMICOLON
+fstatement => decl
+returnstatement => RETURN returnexpression SEMICOLON
+returnexpression => otherexpression | e
+fwhilestatement => WHILE LPAREN relationalexpr RPAREN fbstatementlist
+fifstatement => IF LPAREN relationalexpr RPAREN fbstatementlist iftail
+fiftail => ELSE fbstatementlist
+fiftail => e

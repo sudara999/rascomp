@@ -1,7 +1,8 @@
 #ifndef SYM_TAB
 #define SYM_TAB
 
-#include <compiler_api.h>	// for SUCC and FAIL and MAX_TOKEN_LEN
+#include <compiler_api.h>	// for SUCC and FAIL
+#include <lexer.h>			// for MAX_TOKEN_LEN
 
 // Scopes
 #define LANG_DEF -1

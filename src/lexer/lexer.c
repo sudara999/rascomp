@@ -37,9 +37,11 @@ static char *token_reps[] = {
 	"Keyword:WHILE", 	// while
 	"Keyword:INT", 		// int
 	"Keyword:FLOAT", 	// float
+	"Keyword:VOID",		// void
 	"Keyword:PRINT",	// print
 	"Keyword:READ", 	// read
 	"Keyword:FUNCTION",	// function
+	"Keyword:RETURN",	// return
 	// OTHER
 	"ID:",		// <identifier>
 	"ICONST:",	// <integer constant>
@@ -95,6 +97,7 @@ int getNextToken (struct token *token)
 		if (fgets(line_buffer, MAX_LINE_LEN, fp) == NULL) {
 			fclose(fp);
 			token->token_type = NO_SYM;
+			snprintf(token->token_repr, MAX_LINE_LEN+1, "EOF");
 			return FAIL;
 		}
 		// reinitialize position variables on the line_buffer
@@ -167,6 +170,9 @@ static int onTokenDetect (struct token *token)
 	// FCONST token value should be changed to an float that matches the lexeme
 	if (token_type == FCONST)
 		token->token_val.f_val = atof(token->token_val.str_val);
+	// Ignore comments
+	if (token_type == COMMENT)
+		return getNextToken(token);
 	return SUCC;	
 }
 

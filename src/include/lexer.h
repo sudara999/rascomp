@@ -8,6 +8,14 @@
 #define NOT_ACC_STATE -1	// Token type: No token for a non-accept state
 #define I_TOKEN	-2		// Token type: A token to be ignored (not returned)
 
+#define MAX_LINE_LEN 101
+// A line can take up to 101 characters including the null character
+// 	in the end of the line
+
+#define MAX_TOKEN_LEN 100
+// The maximum token length measures the total numbers of characters up
+// 	to (excluding) the null character
+
 enum token_type {
 	// OPERATORS
 	ASSIGN,	// =
@@ -39,9 +47,11 @@ enum token_type {
 	WHILE, 		// while
 	INT, 		// int
 	FLOAT, 		// float
+	VOID,		// void
 	PRINT,		// print
 	READ, 		// read
 	FUNCTION,	// function
+	RETURN,
 	// OTHER
 	ID,		// <identifier>
 	ICONST,		// <integer constant>

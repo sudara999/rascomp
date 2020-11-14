@@ -6,7 +6,7 @@
 #include <lexer.h>
 #include <lex_table.h>
 
-#define NUM_OF_STATES 66	// Number of states, excluding the error state
+#define NUM_OF_STATES 74	// Number of states, excluding the error state
 #define	HASH_SIZE 11		// Hash-table size 
 				//	- try to base around average number of transitions per state
 
@@ -53,80 +53,91 @@ static struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
 // 	If it is not an accept state,
 // 		the value is NOT_ACC_STATE
 static enum token_type accept_table[] = {
-	// OPERATORS
-	NOT_ACC_STATE,
-	ASSIGN,
+	NOT_ACC_STATE,	// 0
+	// COMPARISON OPERATORS
+	ASSIGN,			// ! ASSIGN is not a comparison operator
 	EQ,
 	LT,
 	LE,
 	GT,
 	GE,
-	NOT,
-	NE,
-	PLUS,
+	NOT,			// ! NOT is a logical operator
+	NE,				// 8
+	// ARITHMETIC OPERATORS	
+	PLUS,			// 9
 	MINUS,
 	MULT,
-	DIV,
-	NOT_ACC_STATE,
+	DIV,			// 12
+	// LOGICAL OPERATORS
+	NOT_ACC_STATE,	// 13
 	AND,
 	NOT_ACC_STATE,
-	OR,
+	OR,				// 16
 	// PUNCTUATION
-	SEMICOLON,
+	SEMICOLON,		// 17
 	LPAREN,
 	RPAREN,
 	COMMA,
 	LBRACE,
 	RBRACE,
 	LBRACKET,
-	RBRACKET,	
+	RBRACKET,		// 24
 	// KEYWORDS
-	NOT_ACC_STATE,
-	IF,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	ELSE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	WHILE,
-	NOT_ACC_STATE,
-	INT,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	FLOAT,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	PRINT,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	READ,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	FUNCTION,
-	// ID
+	ID,	// 25 i 
+	IF,				// 26
+	ID,	// 27 e
 	ID,
+	ID,
+	ELSE,			// 30
+	ID,	// 31 w
+	ID,
+	ID,
+	ID,
+	WHILE,			// 35
+	ID,	// 36 in
+	INT,			// 37
+	ID,	// 38 f
+	ID,
+	ID,
+	ID,
+	FLOAT,			// 42
+	ID,	// 43 p
+	ID,
+	ID,
+	ID,
+	PRINT,			// 47
+	ID,	// 48 r
+	ID,
+	ID,
+	READ,			//  51
+	ID,	//	52 fu
+	ID,
+	ID,
+	ID,
+	ID,
+	ID,
+	FUNCTION,		//	58
+	// ID
+	ID,				// 59
 	// ICONST
-	ICONST,
+	ICONST,			// 60
 	// FCONST
-	FCONST,
+	FCONST,			// 61
 	// COMMENT
-	NOT_ACC_STATE,
-	NOT_ACC_STATE,
-	COMMENT,
+	NOT_ACC_STATE,	// 62 /*
+	NOT_ACC_STATE,	
+	COMMENT,		// 64
 	// I-TOKEN
-	I_TOKEN
+	I_TOKEN,		// 65
+	// NEW KEYWORDS
+	ID,	// 66 v
+	ID,
+	ID,
+	VOID,			// 69
+	ID,	// 70 ret
+	ID,
+	ID,
+	RETURN			// 73
 };
 
 static struct c_list *findClasses(char input_symbol);

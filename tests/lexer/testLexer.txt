@@ -1,1 +1,4 @@
+int a = 5;
 if (a<5) /*Hey there*/ {print a;}
+function void a () {}
+int i=0;
