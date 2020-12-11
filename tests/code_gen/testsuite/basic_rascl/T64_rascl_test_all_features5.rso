@@ -1,0 +1,72 @@
+
+
+.segment, 0, 0, .data
+.float, 0, 10, g
+.int, 0, 1, a
+.int, 0, 1, b
+.int, 0, 1, c
+.int, 0, 10, d
+
+
+.segment, 0, 0, .text
+# Start ASSIGN statement ---
+la, a, 0, T1
+li, 5, 0, T2
+sw, T2, 0, T1
+# Start ASSIGN statement ---
+lw, a, 0, T3
+sl, T3, 2, T3
+la, d, 0, T4
+add, T3, T4, T5
+li, 5, 0, T7
+sw, T7, 0, T5
+# Start ASSIGN statement ---
+la, b, 0, T9
+li, 20, 0, T10
+la, d, 0, T11
+add, T10, T11, T12
+lw, T12, 0, T13
+sw, T13, 0, T9
+# Start ASSIGN statement ---
+la, b, 0, T15
+li, 1, 0, T16
+sw, T16, 0, T15
+# Start ASSIGN statement ---
+la, a, 0, T18
+li, 0, 0, T19
+sw, T19, 0, T18
+# Start ASSIGN statement ---
+la, c, 0, T21
+li, 0, 0, T22
+sw, T22, 0, T21
+# Start WHILE statement ---
+.label, 0, 0, L2
+la, a, 0, T24
+lw, T24, 0, T23
+li, 5, 0, T25
+blt, T23, T25, L1
+j, 0, 0, L0
+.label, 0, 0, L1
+# Start WHILE statement ---
+.label, 0, 0, L5
+la, c, 0, T27
+lw, T27, 0, T26
+li, 10, 0, T28
+blt, T26, T28, L4
+j, 0, 0, L3
+.label, 0, 0, L4
+# Start ASSIGN statement ---
+lw, c, 0, T29
+sl, T29, 2, T29
+la, g, 0, T30
+add, T29, T30, T31
+li, 1.0, 0, FT1
+la, a, 0, T33
+lw, T33, 0, T32
+fmul, FT1, FT3, FT2
+la, c, 0, T35
+lw, T35, 0, T34
+fmul, FT2, FT5, FT4
+sw, FT4, 0, T31
+.label, 0, 0, L3
+.label, 0, 0, L0

@@ -41,17 +41,15 @@ program => decllist funcdecls bstatementlist DD
 ## Declarations
 decllist => decl decllist
 decllist => e
-decl => typespec variablelist
+decl => typespec dvariablelist
 typespec => INT 
 typespec => FLOAT
-variablelist => variable variablelisttail
-variable => ID variabletail
-variabletail => arraydim
-arraydim => LBRACKET arraydimtail | e
-arraydimtail => ID RBRACKET arraydim
-arraydimtail => ICONST RBRACKET arraydim
-variablelisttail => COMMA variable variablelisttail
-variablelisttail => SEMICOLON
+dvariablelist => dvariable dvariablelisttail
+dvariable => ID dvariabletail
+dvariabletail => darraydim | e
+darraydim => LBRACKET ICONST RBRACKET dvariabletail
+dvariablelisttail => COMMA dvariable dvariablelisttail
+dvariablelisttail => SEMICOLON
 
 ## Statements
 bstatementlist => LBRACE statementlist RBRACE
@@ -68,6 +66,11 @@ statementtail => SEMICOLON | e
 printexpression => PRINT variable    # not used
 printstatement => PRINT otherexpression
 readexpression => READ variable
+variable => ID variabletail
+variabletail => arraydim
+arraydim => LBRACKET arraydimtail | e
+arraydimtail => ID RBRACKET arraydim
+arraydimtail => ICONST RBRACKET arraydim
 
 ### Assignment
 assignmentexpression => variable ASSIGN otherexpression
@@ -85,7 +88,7 @@ factor => LPAREN otherexpression RPAREN
 factor => MINUS factor
 factor => ID factortail
 factortail => funccalltail
-factortail => variabletail # important to do this last
+factortail => variabletail # important to do this last because variabletail is nullable
 funccalltail => LPAREN arglist RPAREN
 arglist => arg arglistrem
 arglist => e

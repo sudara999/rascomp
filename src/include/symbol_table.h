@@ -26,7 +26,8 @@ struct symbol {
 	int scope;
 	struct symbol *type;
 	void *mem_loc;
-	void *other;	// create a struct for additional details in heap because symbol persists for other phases of the compiler
+	void *other;	// create a struct for additional details about the symbol
+					// create the struct in heap because symbol persists for other phases of the compiler
 					//	! and free when necessary)
 };
 

@@ -1,0 +1,40 @@
+
+
+.segment, 0, 0, .data
+.int, 0, 5, arr
+.int, 0, 1, a
+.int, 0, 1, b
+.float, 0, 1, c
+.float, 0, 1, d
+
+
+.segment, 0, 0, .text
+# Start ASSIGN statement ---
+la, a, 0, T1
+li, 2, 0, T2
+sw, T2, 0, T1
+# Start ASSIGN statement ---
+lw, a, 0, T3
+sl, T3, 2, T3
+la, arr, 0, T4
+add, T3, T4, T5
+li, 2, 0, T7
+sw, T7, 0, T5
+# Start ASSIGN statement ---
+la, b, 0, T9
+la, a, 0, T11
+lw, T11, 0, T10
+li, 2, 0, T12
+la, b, 0, T14
+lw, T14, 0, T13
+mul, T12, T13, T15
+add, T10, T15, T16
+la, a, 0, T18
+lw, T18, 0, T17
+add, T16, T17, T19
+li, 8, 0, T20
+la, arr, 0, T21
+add, T20, T21, T22
+lw, T22, 0, T23
+add, T19, T23, T24
+sw, T24, 0, T9

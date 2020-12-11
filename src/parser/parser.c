@@ -3,6 +3,7 @@
 #include <compiler_api.h>
 #include <lexer.h>
 #include <parser.h>
+#include <symbol_table.h>
 
 FILE *logfile;
 struct token nextToken;
@@ -41,12 +42,13 @@ int invalid_sym_error()
 int parse ()
 {
 	int status;
+	struct attributes dummy;
 	getNextToken(&nextToken);
 	parse_log.log = "PARSE() -> .START\n";
 	parse_log.indent = 0;
 	parse_log.next = &parse_log;
 	parse_log.prev = &parse_log;
-	if ((status = start(&parse_log, 1)) == PROGRESS)
+	if ((status = start(&parse_log, 1, &dummy)) == PROGRESS)
 		return SUCC;
 	else if (status == FALLBACK)
 		match_error(parse_log.log);
@@ -60,9 +62,10 @@ int main (int argc, char *argv[])
 	// a file to parse must be provided
 	if (argc != 2)
 		return FAIL;
-	// initialise the lexer
+	// initialise the lexer and symbol table
 	if (initLexer(argv[1]) == FAIL)
 		return FAIL;
+	initSymTab();
 	// create the logfile
 	snprintf(logfile_path, sizeof(logfile_path), "%s%s", argv[1], ".log");
 	logfile = fopen(logfile_path, "w");
@@ -76,12 +79,15 @@ int main (int argc, char *argv[])
 // Check if the look-ahead is equal to the starting token of a production.
 //     If so, log the productions that led to the current production/derivation.
 //     Then log the current production. Afterwards, update the lookahead.
-int match_start (enum token_type token, char *production, struct log_list *root_production, int depth)
+int match_start (enum token_type token, char *production, struct log_list *root_production, int depth, struct attributes *attr)
 {
 	if (token == nextToken.token_type) {
+		// Log the productions that led to the current production
 		match_eps(production, root_production, depth);
-		// print the token-value of the token matched
+		// print the token representation of the token matched
 		fprintf(logfile, "%*c %s\n", 4*depth, '*', nextToken.token_repr);
+		// Update the synthesized attribute value with the token's value
+		attr->value = nextToken.token_val;
 		// update the current token
 		getNextToken(&nextToken);
 		return PROGRESS;
@@ -93,13 +99,15 @@ int match_start (enum token_type token, char *production, struct log_list *root_
 
 // Check if the look-ahead is equal to a token found in a production.
 //     If so, log the current production/derivation. Afterwards, update the lookahead.
-int match_next (enum token_type token, char *production, int depth)
+int match_next (enum token_type token, char *production, int depth, struct attributes *attr)
 {
 	if (token == nextToken.token_type) {
 		// print the current production
 		fprintf(logfile, "%*c %s", 4*depth, '|', production);
 		// print the token matched
 		fprintf(logfile, "%*c %s\n", 4*depth, '*', nextToken.token_repr);
+		// Update the synthesized attribute value with the token's value
+		attr->value = nextToken.token_val;
 		// update the current token
 		getNextToken(&nextToken);
 		return PROGRESS;

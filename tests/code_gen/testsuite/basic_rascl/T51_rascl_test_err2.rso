@@ -1,0 +1,41 @@
+
+
+.segment, 0, 0, .data
+.int, 0, 5, a
+.int, 0, 1, b
+.float, 0, 1, c
+.float, 0, 4, d
+
+
+.segment, 0, 0, .text
+# Start ASSIGN statement ---
+li, 8, 0, T0
+la, a, 0, T1
+add, T0, T1, T2
+li, 5, 0, T4
+sw, T4, 0, T2
+# Start WHILE statement ---
+.label, 0, 0, L2
+la, b, 0, T6
+lw, T6, 0, T5
+li, 0, 0, T7
+bgt, T5, T7, L1
+j, 0, 0, L0
+.label, 0, 0, L1
+# Start if statement ---
+la, b, 0, T9
+lw, T9, 0, T8
+li, 10, 0, T10
+blt, T8, T10, L5
+j, 0, 0, L4
+# Start if statement THEN part ---
+.label, 0, 0, L5
+# Start ASSIGN statement ---
+la, b, 0, T12
+la, b, 0, T14
+lw, T14, 0, T13
+sw, T13, 0, T12
+# Start if statement ELSE part ---
+.label, 0, 0, L4
+.label, 0, 0, L3
+.label, 0, 0, L0

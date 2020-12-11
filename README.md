@@ -1,8 +1,8 @@
 # CSE 304 Project
 
-This is a simple compiler for the language ***rascl***, a small subset of C.
+This is a simple compiler for the language **rascl**, a small subset of C.
 
-## Table of Contents
+## Table of Contents (Incomplete)
 
 - [CSE 304 Project](#cse-304-project)
   * [Phase 1: Lexical Analysis](#phase-1-lexical-analysis)
@@ -175,9 +175,9 @@ Each non-terminal(NT) in the grammar is defined as a function.
 ##### Return values
 
 The return value of the the NT can be:
-  1. PROGRESS
-  2. FALLBACK
-  3. ROLLBACK
+  1. `PROGRESS`
+  2. `FALLBACK`
+  3. `ROLLBACK`
 
 The return value informs the calling NT about the action it should take.
 
@@ -185,7 +185,7 @@ The return value informs the calling NT about the action it should take.
 
 The NT function checks whether the next token will be matched by one of the NT's productions. The productions are checked in sequence as described below:
 
-Check whether the 1st symbol in the production can match the next token. If the 1st symbol matches, *progress* to the next symbol in the production after logging the productions that led to the match. Otherwise, if the 1st symbol did not match, *fallback* to the next production and repeat. If there was an error detected, *rollback* to the last non-terminal.
+Check whether the 1st symbol in the production can match the next token from the lexer. If the 1st symbol matches, *progress* to the next symbol in the production after logging the productions that led to the match. Otherwise, if the 1st symbol did not match, *fallback* to the next production and repeat. If there was an error detected, *rollback* to the last non-terminal.
 
 If one of the productions had a start symbol that matched the token, the next symbols in the production would be matched and logged on *progress*. This would continue till the end of the production is reached and the calling NT would be informed to *progress*. If a symbol is not matched after the starting symbol of a production has already been matched, there is no *fallback*; the function can only *rollback* to the calling NT because an error is detected.
 
@@ -208,8 +208,30 @@ Please refer to   `src/parser/rascl_syntax.c` for more examples.
 ### Testing the symbol Table
 
 Run `make` or `make parser` in the root of the project directory to build the parser `build/parser`. To test the parser, run the parser with one of the test programs in `test/parser/testsuite/`. The test-programs have .rsc extensions and the parser will produce .rsc.log files as output. The parser needs to be executed from the root of the directory to work properly. The log files will be created in the same folder as the source file. For example, to parse a .rsc file and see its output you would enter the following commands at the root of the project folder in sequence:
+
 ```
 make parser
 ./build/parser ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc
 cat ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc.log
 ```
+
+## Phase 4: Intermediate Code Generation (Draft)
+
+Intermediate code will be generated through syntax directed definitions (SDDs). As the parser runs through productions of the NT-functions, it will evaluate code snippets that are found in between symbols of the productions. The code to generate the intermediate code for rascl will be found in `src/parser/rascl_syntax.c`.
+
+### SDD data structures
+
+#### Attributes
+
+The attributes of a non-terminal in a production are stored in a variable `struct attributes *attr`. You can add fields to `struct attributes` as necessary.
+
+```C
+struct attributes {
+	struct symbol *type;
+	union token_val value;
+};
+```
+
+When a non-terminal or a terminal returns, you can read the attributes of that symbol by using the macro `POP_ATTR(x)`. For example, if you want to read the attribute `type`, use `POP_ATTR(type)`.
+
+Before entering a non-terminal, or matching a terminal, you can pass attributes to the symbol by using the macro `PUSH_ATTR(x, val)`. For example, if you want to set the attribute `type` to `sym_int`, use `PUSH_ATTR(type, sym_int)`.

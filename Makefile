@@ -55,7 +55,7 @@ build:
 
 # Create the parser
 
-parser: $(PARSER_OBJ) $(LEX_OBJ) | build 
+parser: $(PARSER_OBJ) $(LEX_OBJ) $(SYM_TAB_OBJ) $(HASH_TAB_OBJ) | build 
 	$(CC) $(CFLAGS) -o build/$@ $^
 
 # Clean the files created by make

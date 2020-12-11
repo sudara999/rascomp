@@ -1,62 +1,74 @@
 #include <parser.h>
+#include <stdio.h>
 
 // ## The declarations
 
-DEF_NT(variablelisttail)
-	START_T(COMMA, "variablelisttail -> COMMA. variable variablelisttail\n",
-		NEXT_NT(variable, "variablelisttail -> COMMA .variable variablelisttail\n",
-			NEXT_NT(variablelisttail, 
-					"variablelisttail -> COMMA variable .variablelisttail\n",
+DEF_NT(dvariablelisttail)
+	START_T(COMMA, "dvariablelisttail -> COMMA. dvariable dvariablelisttail\n",
+		NEXT_NT(dvariable, "dvariablelisttail -> COMMA .dvariable dvariablelisttail\n",
+			NEXT_NT(dvariablelisttail, 
+					"dvariablelisttail -> COMMA dvariable .dvariablelisttail\n",
 				END_P)))
-	START_T(SEMICOLON, "variablelisttail -> SEMICOLON.\n",
+	START_T(SEMICOLON, "dvariablelisttail -> SEMICOLON.\n",
 		END_P)
 END_NT
 
-DEF_NT(arraydimtail)
-	START_T(ID, "arraydimtail -> ID. RBRACKET arraydim\n",
-		NEXT_T(RBRACKET, "arraydimtail -> ID RBRACKET. arraydim\n",
-			NEXT_NT(arraydim, "arraydimtail -> ID RBRACKET .arraydim\n",
-				END_P)))
-	START_T(ICONST, "arraydimtail -> ICONST. RBRACKET arraydim\n",
-		NEXT_T(RBRACKET, "arraydimtail -> ICONST RBRACKET. arraydim\n",
-			NEXT_NT(arraydim, "arraydimtail -> ICONST RBRACKET .arraydim\n",
-				END_P)))
+DEF_NT(darraydim)
+	START_T(LBRACKET, "darraydim -> LBRACKET. ICONST RBRACKET dvariabletail\n",
+		NEXT_T(ICONST, "darraydim -> LBRACKET ICONST. RBRACKET dvariabletail\n",
+			NEXT_T(RBRACKET, "darraydim -> LBRACKET ICONST RBRACKET. dvariabletail\n",
+				NEXT_NT(dvariabletail, "darraydim -> LBRACKET ICONST RBRACKET .dvariabletail\n",
+					END_P))))
 END_NT
 
-DEF_NT(arraydim)
-	START_T(LBRACKET, "arraydim -> LBRACKET. arraydimtail\n",
-		NEXT_NT(arraydimtail, "arraydim -> LBRACKET .arraydimtail\n",
-			END_P))
-	EPS_P("arraydim -> e.\n")
-END_NT
-
-DEF_NT(variabletail)
-	START_NT(arraydim, "variabletail -> .arraydim\n",
+DEF_NT(dvariabletail)
+	START_NT(darraydim, "dvariabletail -> .darraydim\n",
 		END_P)
+	EPS_P("dvariabletail -> e.\n")
 END_NT
 
-DEF_NT(variable)
-	START_T(ID, "variable -> ID. variabletail\n",
-		NEXT_NT(variabletail, "variable -> ID .variabletail\n",
+DEF_NT(dvariable)
+	struct symbol *var;
+	int num_dims = 1;
+	START_T(ID, "dvariable -> ID. dvariabletail\n",
+		{
+		// Create a symbol table entry for the symbol
+		//	with the label/ID read
+		if (addSymbol(POP_ATTR(value).str_val) == FAIL){
+			ERR_QUIT("ERROR: Could not add symbol to symbol table\n");
+		}
+		var = getSymbol(POP_ATTR(value).str_val, GLOBAL_SCOPE);
+		}
+		NEXT_NT(dvariabletail, "dvariable -> ID .dvariabletail\n",
+			{
+			// print the instructions for declaring the variable
+			if (attr->type == sym_float){
+				printf(".float, 0, %d, %s\n", num_dims, var);
+			}
+			else
+				printf(".int, 0, %d, %s\n", num_dims, var);
+			}
 			END_P))
 END_NT
 
-DEF_NT(variablelist)
-	START_NT(variable, "variablelist -> .variable variablelisttail\n",
-		NEXT_NT(variablelisttail, "variablelist -> variable .variablelisttail\n",
+DEF_NT(dvariablelist)
+	START_NT(dvariable, "dvariablelist -> .dvariable dvariablelisttail\n",
+		NEXT_NT(dvariablelisttail, "dvariablelist -> dvariable .dvariablelisttail\n",
 			END_P))
 END_NT
 
 DEF_NT(typespec)
 	START_T(INT, "typespec -> INT.\n",
+		{attr->type = sym_int;}
 		END_P)
 	START_T(FLOAT, "typespec -> FLOAT.\n",
+		{attr->type = sym_float;}
 		END_P)
 END_NT
 
 DEF_NT(decl)
-	START_NT(typespec, "decl -> .typespec variablelist\n",
-		NEXT_NT(variablelist, "decl -> typespec .variablelist\n",
+	START_NT(typespec, "decl -> .typespec dvariablelist\n",
+		NEXT_NT(dvariablelist, "decl -> typespec .dvariablelist\n",
 			END_P))
 END_NT
 
@@ -155,6 +167,37 @@ DEF_NT(whilestatement)
 				NEXT_T(RPAREN, "whilestatement -> WHILE LPAREN relationalexpr RPAREN. whiletail\n",
 					NEXT_NT(whiletail, "whilestatement -> WHILE LPAREN relationalexpr RPAREN .whiletail\n",
 						END_P)))))
+END_NT
+
+// ### variables
+
+DEF_NT(arraydimtail)
+	START_T(ID, "arraydimtail -> ID. RBRACKET arraydim\n",
+		NEXT_T(RBRACKET, "arraydimtail -> ID RBRACKET. arraydim\n",
+			NEXT_NT(arraydim, "arraydimtail -> ID RBRACKET .arraydim\n",
+				END_P)))
+	START_T(ICONST, "arraydimtail -> ICONST. RBRACKET arraydim\n",
+		NEXT_T(RBRACKET, "arraydimtail -> ICONST RBRACKET. arraydim\n",
+			NEXT_NT(arraydim, "arraydimtail -> ICONST RBRACKET .arraydim\n",
+				END_P)))
+END_NT
+
+DEF_NT(arraydim)
+	START_T(LBRACKET, "arraydim -> LBRACKET. arraydimtail\n",
+		NEXT_NT(arraydimtail, "arraydim -> LBRACKET .arraydimtail\n",
+			END_P))
+	EPS_P("arraydim -> e.\n")
+END_NT
+
+DEF_NT(variabletail)
+	START_NT(arraydim, "variabletail -> .arraydim\n",
+		END_P)
+END_NT
+
+DEF_NT(variable)
+	START_T(ID, "variable -> ID. variabletail\n",
+		NEXT_NT(variabletail, "variable -> ID .variabletail\n",
+			END_P))
 END_NT
 
 // ### Assignment
@@ -462,8 +505,10 @@ END_NT
 // ## The program
 
 DEF_NT(program)
+	{printf(".segment, 0, 0, .data\n");}
 	START_NT(decllist, "program -> .decllist funcdecls bstatementlist DD\n",
 		NEXT_NT(funcdecls, "program -> decllist .funcdecls bstatementlist DD\n",
+			{printf("\n.segment, 0, 0, .text\n");}
 			NEXT_NT(bstatementlist, "program -> decllist funcdecls .bstatementlist DD\n",
 				NEXT_T(NO_SYM, "program -> decllist funcdecls bstatementlist DD.\n",
 					END_P))))
