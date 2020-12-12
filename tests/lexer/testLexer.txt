@@ -1,4 +1,11 @@
-int a = 5;
-if (a<5) /*Hey there*/ {print a;}
-function void a () {}
-int i=0;
+(define ; double(x) -> 2.5 * x
+	(double +x*) 
+	(* 2.5 +x*))
+
+;;; check if arg is 2
+(define
+    (2? x)
+    (if (= x 2)
+        #t #f))
+
+(2? (double 0))

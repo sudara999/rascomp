@@ -8,45 +8,46 @@
 // The textual representations of the token-types
 static char *token_reps[] = {
 	// OPERATORS
-	"ASSIGN",	// =
-	"LT",		// <
-	"LE",		// <=
-	"GT",		// >
-	"GE",		// >=
-	"EQ",		// ==
-	"NE",		// !=
+	"EE",	// =
+	"LT",	// <
+	"LE",	// <=
+	"GT",	// >
+	"GE",	// >=
+	"EQ",		// eq?
+	"EQV",		// eqv?
+	"EQUAL",	// equal?
 	"PLUS", 	// +
 	"MINUS",	// -
 	"MULT",		// *
 	"DIV",		// /
-	"NOT",		// !
-	"AND",		// &&
-	"OR",		// ||
+	"NOT",	// not
+	"AND",	// and
+	"OR",	// or
 	// PUNCTUATION
-	"SEMICOLON",	// ;
-	"LPAREN",	// (
-	"RPAREN",	// )
-	"COMMA",	// ,
-	"LBRACE",	// {
-	"RBRACE", 	// }
-	"LBRACKET",	// [
-	"RBRACKET",	// ]
+	"LPAREN",		// (
+	"RPAREN",		// )
+	"QUOTE",		// `
 	// KEYWORDS
-	"Keyword:IF",		// if
-	"Keyword:ELSE", 	// else
-	"Keyword:WHILE", 	// while
-	"Keyword:INT", 		// int
-	"Keyword:FLOAT", 	// float
-	"Keyword:VOID",		// void
-	"Keyword:PRINT",	// print
-	"Keyword:READ", 	// read
-	"Keyword:FUNCTION",	// function
-	"Keyword:RETURN",	// return
-	// OTHER
-	"ID:",		// <identifier>
-	"ICONST:",	// <integer constant>
-	"FCONST:",	// <Floating constant>
-	"COMMENT"	// <comment>
+	"CAR",
+	"CDR",
+	"CONS",
+	"LIST",
+	"NULL",
+	"LENGTH",
+	"DEFINE_F",
+	"LET",
+	"LET*",
+	"LAMBDA",
+	"IF",
+	"COND",
+	"ELSE",
+	// ATOMIC DATA TYPES
+	"SYMBOL:",		// e.g. free
+	"INTEGER:",		// e.g. 1
+	"REAL:",		// e.g. 1.0
+	"BOOLEAN:",		// e.g. #t
+	"STRING:",		// e.g. "cat"
+	"CHAR:"			// e.g. #\c
 };
 
 static FILE *fp;
@@ -161,18 +162,15 @@ static int onTokenDetect (struct token *token)
 	// 	by returning the next token instead
 	if (token_type == I_TOKEN)
 		return getNextToken(token);
-	// The textual representation of ID, ICONST or FCONST tokens should show the lexeme
-	if (token_type == ID || token_type == ICONST || token_type == FCONST)
+	// The textual representation of some tokens should show the lexeme
+	if (token_type == SYMBOL || token_type == INTEGER || token_type == REAL || token_type == BOOLEAN || token_type == STRING || token_type == CHAR)
 		strcat(token->token_repr, token->token_val.str_val);
-	// ICONST token value should be changed to an integer that matches the lexeme
-	if (token_type == ICONST)
+	// INTEGER token value should be changed to an integer that matches the lexeme
+	if (token_type == INTEGER)
 		token->token_val.i_val = atoi(token->token_val.str_val);
-	// FCONST token value should be changed to an float that matches the lexeme
-	if (token_type == FCONST)
+	// REAL token value should be changed to an float that matches the lexeme
+	if (token_type == REAL)
 		token->token_val.f_val = atof(token->token_val.str_val);
-	// Ignore comments
-	if (token_type == COMMENT)
-		return getNextToken(token);
 	return SUCC;	
 }
 

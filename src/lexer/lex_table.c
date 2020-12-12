@@ -6,8 +6,8 @@
 #include <lexer.h>
 #include <lex_table.h>
 
-#define NUM_OF_STATES 74	// Number of states, excluding the error state
-#define	HASH_SIZE 11		// Hash-table size 
+#define NUM_OF_STATES 25	// Number of states, excluding the error state
+#define	HASH_SIZE 5			// Hash-table size 
 				//	- try to base around average number of transitions per state
 
 #define MAX_CLASS_NAME_LEN 3	// The maxmimum name length of a character class
@@ -15,6 +15,8 @@
 // The following 2 macros were created to convert a macro argument to a string
 #define XSTR(s) STR(s)	// Expand the macro arg and then covert to string
 #define STR(s) #s	// Convert macro argument to string
+
+#define static_arr_length(arr) sizeof(arr)/sizeof(arr[0])
 
 // Transition list-node
 // 	The transition list-node maps a character or a character class to a new state
@@ -54,90 +56,30 @@ static struct t_list *lex_table[NUM_OF_STATES][HASH_SIZE] = {NULL};
 // 		the value is NOT_ACC_STATE
 static enum token_type accept_table[] = {
 	NOT_ACC_STATE,	// 0
-	// COMPARISON OPERATORS
-	ASSIGN,			// ! ASSIGN is not a comparison operator
-	EQ,
-	LT,
+	LPAREN,
+	RPAREN,
+	QUOTE,
+	EE,
+	LT,	// 5
 	LE,
 	GT,
 	GE,
-	NOT,			// ! NOT is a logical operator
-	NE,				// 8
-	// ARITHMETIC OPERATORS	
-	PLUS,			// 9
-	MINUS,
+	PLUS,
+	MINUS,	// 10
 	MULT,
-	DIV,			// 12
-	// LOGICAL OPERATORS
-	NOT_ACC_STATE,	// 13
-	AND,
+	DIV,
+	INTEGER,
+	REAL,	// 14
 	NOT_ACC_STATE,
-	OR,				// 16
-	// PUNCTUATION
-	SEMICOLON,		// 17
-	LPAREN,
-	RPAREN,
-	COMMA,
-	LBRACE,
-	RBRACE,
-	LBRACKET,
-	RBRACKET,		// 24
-	// KEYWORDS
-	ID,	// 25 i 
-	IF,				// 26
-	ID,	// 27 e
-	ID,
-	ID,
-	ELSE,			// 30
-	ID,	// 31 w
-	ID,
-	ID,
-	ID,
-	WHILE,			// 35
-	ID,	// 36 in
-	INT,			// 37
-	ID,	// 38 f
-	ID,
-	ID,
-	ID,
-	FLOAT,			// 42
-	ID,	// 43 p
-	ID,
-	ID,
-	ID,
-	PRINT,			// 47
-	ID,	// 48 r
-	ID,
-	ID,
-	READ,			//  51
-	ID,	//	52 fu
-	ID,
-	ID,
-	ID,
-	ID,
-	ID,
-	FUNCTION,		//	58
-	// ID
-	ID,				// 59
-	// ICONST
-	ICONST,			// 60
-	// FCONST
-	FCONST,			// 61
-	// COMMENT
-	NOT_ACC_STATE,	// 62 /*
-	NOT_ACC_STATE,	
-	COMMENT,		// 64
-	// I-TOKEN
-	I_TOKEN,		// 65
-	// NEW KEYWORDS
-	ID,	// 66 v
-	ID,
-	ID,
-	VOID,			// 69
-	ID,	// 70 ret
-	ID,
-	ID,
-	RETURN			// 73
+	BOOLEAN,
+	NOT_ACC_STATE,
+	CHAR,
+	NOT_ACC_STATE,
+	STRING,	// 20
+	SYMBOL,
+	I_TOKEN,
+	I_TOKEN,
+	I_TOKEN	// 24
 };
 
 static struct c_list *findClasses(char input_symbol);
@@ -245,6 +187,22 @@ enum token_type accept (int current_state)
 		return accept_table[current_state];
 }
 
+int isSchemeIdChar(char symbol)
+{
+	// Checks if the character is allowed in a Scheme Identifier
+	// Reference: https://www.scheme.com/tspl2d/intro.html#g1509
+	char idChars[] = {'?', '!', '.', '+', '-', '*', '/',
+			'<', '=', '>', ':', '$', '%', '^', '&', '_', '~'};
+	if (isalpha(symbol))
+		return 1;
+	if (isdigit(symbol))
+		return 1;
+	for (int i = 0; i < static_arr_length(idChars); i++) {
+		if (symbol == idChars[i])
+			return 1;
+	}
+	return 0;
+}
 
 static struct c_list *findClasses(char symbol)
 {
@@ -291,6 +249,16 @@ static struct c_list *findClasses(char symbol)
 	// 	This helps the user type out spaces
 	if (symbol == ' ')
 		ADD_CLASS("SPC");
+	// If the symbol is a white-space it belongs to the WSP class
+	//   Else, it belongs to the NWS class
+	if (isspace(symbol))
+		ADD_CLASS("WSP")
+	else
+		ADD_CLASS("NWS");
+	// If the symbol is a character allowed in an identifier in Scheme
+	//   it belongs to the SID class
+	if (isSchemeIdChar(symbol))
+		ADD_CLASS("SID");
 	// All symbols belong to the ANY class
 	ADD_CLASS("ANY");
 	

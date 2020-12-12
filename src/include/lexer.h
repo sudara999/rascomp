@@ -18,45 +18,47 @@
 
 enum token_type {
 	// OPERATORS
-	ASSIGN,	// =
+	EE, // =
 	LT,	// <
 	LE,	// <=
 	GT,	// >
 	GE,	// >=
-	EQ,	// ==
-	NE,	// !=
+	EQ,		// eq?		!delete
+	EQV,	// eqv?		!delete
+	EQUAL,	// equal?	!delete
 	PLUS, 	// +
 	MINUS,	// -
 	MULT,	// *
 	DIV,	// /
-	NOT,	// !
-	AND,	// &&
-	OR,	// ||
+	NOT,	// not	!delete
+	AND,	// and	!delete
+	OR,		// or	!delete
 	// PUNCTUATION
-	SEMICOLON,	// ;
 	LPAREN,		// (
 	RPAREN,		// )
-	COMMA,		// ,
-	LBRACE,		// {
-	RBRACE, 	// }
-	LBRACKET,	// [
-	RBRACKET,	// ]
+	QUOTE,		// `
 	// KEYWORDS
-	IF,		// if
-	ELSE, 		// else
-	WHILE, 		// while
-	INT, 		// int
-	FLOAT, 		// float
-	VOID,		// void
-	PRINT,		// print
-	READ, 		// read
-	FUNCTION,	// function
-	RETURN,
-	// OTHER
-	ID,		// <identifier>
-	ICONST,		// <integer constant>
-	FCONST,		// <Floating constant>
-	COMMENT		// <comment>
+	// ! Delete!
+	CAR,
+	CDR,
+	CONS,
+	LIST_F,
+	NULL_F,
+	LENGTH_F,
+	DEFINE_F,
+	LET,
+	LET_STAR,
+	LAMBDA,
+	IF,
+	COND,
+	ELSE,
+	// ATOMIC DATA TYPES
+	SYMBOL,		// e.g. free
+	INTEGER,	// e.g. 1
+	REAL,		// e.g. 1.0
+	BOOLEAN,	// e.g. #t
+	STRING,		// e.g. "cat"
+	CHAR		// e.g. #\c
 };
 
 union token_val{

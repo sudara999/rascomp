@@ -47,7 +47,7 @@ test_hash_table: tests/util/testHashtable.o $(HASH_TAB_OBJ) | build
 test_lexer: tests/lexer/testLexer.o $(LEX_OBJ) | build
 	$(CC) $(CFLAGS) -o build/$@ $^
 
-test_parser: tests/parser/testParser.o src/parser/parser.o $(LEX_OBJ) | build
+test_parser: tests/parser/testParser.o src/parser/parser.o $(LEX_OBJ) $(SYM_TAB_OBJ) $(HASH_TAB_OBJ) | build
 	$(CC) $(CFLAGS) -o build/$@ $^
 
 build:

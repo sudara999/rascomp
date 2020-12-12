@@ -1,34 +1,6 @@
-# CSE 304 Project
+# CuScheme
 
-This is a simple compiler for the language **rascl**, a small subset of C.
-
-## Table of Contents (Incomplete)
-
-- [CSE 304 Project](#cse-304-project)
-  * [Phase 1: Lexical Analysis](#phase-1-lexical-analysis)
-    + [Lexical Analyser functions](#lexical-analyser-functions)
-      - [int initLexer(char *filename);](#int-initlexerchar-filename)
-      - [int getNextToken(struct token *nextToken);](#int-getnexttokenstruct-token-nexttoken)
-    + [Lexical Analyser data structures](#lexical-analyser-data-structures)
-      - [Tokens](#tokens)
-    + [How the lexical analyser works](#how-the-lexical-analyser-works)
-    + [Testing the lexical analyser](#testing-the-lexical-analyser)
-    + [Future Features](#future-features)
-  * [Phase 2: Symbol Table Manager](#phase-2-symbol-table-manager)
-    + [Symbol Table functions](#symbol-table-functions)
-      - [void initSymTab ();](#void-initsymtab)
-      - [int newScope ();](#int-newscope)
-      - [void exitScope ();](#void-exitscope)
-      - [int addSymbol (char *identifier)](#int-addsymbol-char-identifier)
-      - [int addAttributeToSymbol (char *identifier, int scope, int attribute, void *value);](#int-addattributetosymbol-char-identifier-int-scope-int-attribute-void-value)
-      - [int symbolInTable (char *identifier, int scope);](#int-symbolintable-char-identifier-int-scope)
-      - [struct symbol *getSymbol (char *identifier, int scope);](#struct-symbol-getsymbol-char-identifier-int-scope)
-    + [Symbol Table data structures](#symbol-table-data-structures)
-      - [Symbols](#symbols)
-      - [The Symbol Table](#the-symbol-table)
-    + [Testing the Symbol Table](#testing-the-symbol-table)
-
-## Phase 1: Lexical Analysis
+## Lexical Analysis
 
 The lexical analyser is implemented in `lexer.c`.
 
@@ -66,7 +38,7 @@ struct token {
 
 They have the following members:
 
-+ token_type: The type of the token (for example, the `IF` token)
++ token_type: The type of the token (for example, the `DEFINE` token)
 
 + token_val: The default value/type of a token is the lexeme that was scanned stored in a char array. To change the default value/type, the function `onTokenDetect` is used. 
 
@@ -84,11 +56,7 @@ The source file will be read line-by-line and scanned for tokens. The tokens are
 
 The program `testLexer.c` will use `lexer.c` to get tokens from the test file, `testLexer.txt`.
 
-### Future Features
-
-+ A function `destroy_lex_table()` to destroy the hash-table created in `lex_table.c`. This function will free up memory that is not being used.
-
-## Phase 2: Symbol Table Manager
+## Symbol Table Manager
 
 The symbol-table manager is implemented in `symbol_table.c`.
 
@@ -96,7 +64,7 @@ The symbol-table manager is implemented in `symbol_table.c`.
 
 #### void initSymTab ();
 
-Initialises the symbol table. Also creates the language-defined data-types (for example, `int`) as symbols in the table.
+Initialises the symbol table. Also creates the language-defined data-types (for example, `string`) as symbols in the table.
 
 #### int newScope ();
 
@@ -164,7 +132,7 @@ The program `testSymbolTable.c` will test the Symbol Table functions implemented
 
 ## Phase 3: Parser
 
-The parser is implemented as a recursive descent parser. The parser can be found in `src/parser/parser.c`. The header file for the parser, `src/include/parser.h`, defines the macros that can be used to create CFG rules for the parser. The rules to parse rascl code can be found in `src/parser/rascl_syntax.c`.
+The parser is implemented as a recursive descent parser. The parser can be found in `src/parser/parser.c`. The header file for the parser, `src/include/parser.h`, defines the macros that can be used to create CFG rules for the parser. The rules to parse rascl code can be found in `src/parser/scheme_syntax.c`.
 
 ### Parser functions
 
@@ -203,21 +171,21 @@ END_NT
 
 `START_T()` and `START_NT()` create production rules for the non-terminal that it is in. `START_T()` is used when the production starts with a terminal. If the production starts with a non-terminal `START_NT()` is used. In the example shown above, `ID` is a terminal, so `START_T()` is used to start the production. The first symbol of the production is entered as the first argument of the macro. The second argument is the string representation of the derivation of the production when the terminal `ID` is read. The third argument should be a macro denoting the rest of the production. In this case the production has no more symbols, so `END_P` is used to mark the end of the production.
 
-Please refer to   `src/parser/rascl_syntax.c` for more examples.
+Please refer to   `src/parser/scheme_syntax.c` for more examples.
 
 ### Testing the symbol Table
 
-Run `make` or `make parser` in the root of the project directory to build the parser `build/parser`. To test the parser, run the parser with one of the test programs in `test/parser/testsuite/`. The test-programs have .rsc extensions and the parser will produce .rsc.log files as output. The parser needs to be executed from the root of the directory to work properly. The log files will be created in the same folder as the source file. For example, to parse a .rsc file and see its output you would enter the following commands at the root of the project folder in sequence:
+Run `make` or `make parser` in the root of the project directory to build the parser `build/parser`. To test the parser, run the parser with one of the test programs in `test/parser/`. The test-programs have .rsc extensions and the parser will produce .rsc.log files as output. The parser needs to be executed from the root of the directory to work properly. The log files will be created in the same folder as the source file. For example, to parse a .rsc file and see its output you would enter the following commands at the root of the project folder in sequence:
 
 ```
 make parser
-./build/parser ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc
-cat ./tests/parser/testsuite/basic_rascl_tests/T00_rascl_test_exprs1.rsc.log
+./build/parser ./tests/parser/add.scm
+cat ./tests/parser/add.scm.log
 ```
 
 ## Phase 4: Intermediate Code Generation (Draft)
 
-Intermediate code will be generated through syntax directed definitions (SDDs). As the parser runs through productions of the NT-functions, it will evaluate code snippets that are found in between symbols of the productions. The code to generate the intermediate code for rascl will be found in `src/parser/rascl_syntax.c`.
+Intermediate code will be generated through syntax directed definitions (SDDs). As the parser runs through productions of the NT-functions, it will evaluate code snippets that are found in between symbols of the productions. The code to generate the intermediate code for rascl will be found in `src/parser/scheme_syntax.c`.
 
 ### SDD data structures
 

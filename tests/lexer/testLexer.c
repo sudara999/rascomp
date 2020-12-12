@@ -10,7 +10,7 @@ int main(){
 		// ! error handling
 		while (getNextToken(token) == SUCC)
 			printf("%s\n", token->token_repr);
-		printf("Final return value: %d\n", token->token_type);
+		printf("Final return value(-2:NO_SYM, -1:INVALID_SYM): %d\n", token->token_type);
 		free(token);
 		return 0;
 	} 

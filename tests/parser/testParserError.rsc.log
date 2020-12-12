@@ -1,9 +1,0 @@
-| PARSE() -> .START
-   | start -> VOID. leftrecursion
-   * Keyword:VOID
-| PARSE() -> .START
-ERROR: Max depth reached
-	Error reported at depth: 101
-	Maximum depth: 100
-	Last Lookahead: ID:doom
-	Last production: leftrecursion -> .leftrecursion
