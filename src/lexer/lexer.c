@@ -13,34 +13,14 @@ static char *token_reps[] = {
 	"LE",	// <=
 	"GT",	// >
 	"GE",	// >=
-	"EQ",		// eq?
-	"EQV",		// eqv?
-	"EQUAL",	// equal?
 	"PLUS", 	// +
 	"MINUS",	// -
 	"MULT",		// *
 	"DIV",		// /
-	"NOT",	// not
-	"AND",	// and
-	"OR",	// or
 	// PUNCTUATION
 	"LPAREN",		// (
 	"RPAREN",		// )
 	"QUOTE",		// `
-	// KEYWORDS
-	"CAR",
-	"CDR",
-	"CONS",
-	"LIST",
-	"NULL",
-	"LENGTH",
-	"DEFINE_F",
-	"LET",
-	"LET*",
-	"LAMBDA",
-	"IF",
-	"COND",
-	"ELSE",
 	// ATOMIC DATA TYPES
 	"SYMBOL:",		// e.g. free
 	"INTEGER:",		// e.g. 1

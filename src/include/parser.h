@@ -4,6 +4,7 @@
 #include <lexer.h>
 #include <stdio.h>
 #include <symbol_table.h>
+#include <string.h>
 
 #define PROGRESS 0
 #define FALLBACK 1
@@ -34,6 +35,20 @@ struct attributes {
 // Always define this function as the starting symbol in your grammar 
 int start (struct log_list *, int, struct attributes *);
 
+#ifdef LAZY_PARSE
+// Define a non-terminal by using this function template
+#define DEF_NT(nt_name)\
+	int nt_name (struct log_list *root_production, int depth, struct attributes *attr) {\
+		int status;\
+		struct log_list log_list;\
+		struct attributes __attr;\
+		char nt_production[101] = #nt_name;\
+		char production_temp[101];\
+		log_list.log = production_temp;\
+		log_list.indent = depth;\
+		if (depth > PARSER_MAX_DEPTH) return depth_error(depth, root_production);\
+		__attr = *attr;
+#else
 // Define a non-terminal by using this function template
 #define DEF_NT(nt_name)\
 	int nt_name (struct log_list *root_production, int depth, struct attributes *attr) {\
@@ -45,9 +60,12 @@ int start (struct log_list *, int, struct attributes *);
 		log_list.indent = depth;\
 		if (depth > PARSER_MAX_DEPTH) return depth_error(depth, root_production);\
 		__attr = *attr;
+#endif
 
 // End of definition of non-terminal
 #define END_NT return FALLBACK; }
+
+#ifndef LAZY_PARSE
 
 // Match the starting token of a production in a non-terminal
 #define START_T(token, production, prod_tail)\
@@ -86,6 +104,59 @@ int start (struct log_list *, int, struct attributes *);
 // Match an epsilon production
 #define EPS_P(production) return match_eps(production, root_production, depth);
 
+#else
+
+// Match the starting token of a production in a non-terminal
+#define START_T(token, prod_tail)\
+	snprintf(production_temp, sizeof(production_temp), "%s %s", nt_production, "-> ." #token " ...\n");\
+	if ((status = match_start(token, production_temp, root_production, depth, &__attr)) == PROGRESS) {\
+		strcat(nt_production, " -> " #token);\
+		prod_tail }\
+	else if (status == ROLLBACK) return ROLLBACK; 
+
+// Match a token of a production in a non-terminal
+#define NEXT_T(token, prod_tail)\
+	snprintf(production_temp, sizeof(production_temp), "%s %s", nt_production, "." #token " ...\n");\
+	if ((status = match_next(token, production_temp, depth, &__attr)) == PROGRESS) {\
+		strcat(nt_production, " " #token);\
+		prod_tail }\
+	else return ROLLBACK;
+
+// Match a non-terminal of a production in a non-terminal
+#define NEXT_NT(nt_name, prod_tail)\
+	snprintf(production_temp, sizeof(production_temp), "%s %s", nt_production, "." #nt_name " ...\n");\
+	log_list.next = &log_list;\
+	log_list.prev = &log_list;\
+	if ((status = nt_name(&log_list, depth+1, &__attr)) == PROGRESS) {\
+		strcat(nt_production, " " #nt_name);\
+ 		prod_tail }\
+	else if (status == ROLLBACK) return ROLLBACK;\
+	else return match_error(#nt_name);
+
+// Match the starting non-terminal of a production in a non-terminal
+#define START_NT(nt_name, prod_tail)\
+	snprintf(production_temp, sizeof(production_temp), "%s %s", nt_production, "-> ." #nt_name  " ...\n");\
+	log_list.next = root_production;\
+	log_list.prev = root_production->prev;\
+	root_production->prev->next = &log_list;\
+	root_production->prev = &log_list;\
+	if ((status = nt_name(root_production, depth+1, &__attr)) == PROGRESS) {\
+		strcat(nt_production, " -> " #nt_name);\
+		prod_tail }\
+	else if (status == ROLLBACK) return ROLLBACK;\
+	log_list.prev->next = root_production;\
+	root_production->prev = log_list.prev;
+
+// Finish matching a production in a non-terminal
+#define END_P return PROGRESS;
+
+// Match an epsilon production
+#define EPS_P\
+	snprintf(production_temp, sizeof(production_temp), "%s %s", nt_production, "-> e.\n");\
+	return match_eps(production_temp, root_production, depth);
+
+#endif
+
 // Check if the look-ahead is equal to the starting token of a production.
 //     If so, log the productions that led to the current production/derivation.
 //     Then log the current production. Afterwards, update the lookahead.
@@ -106,7 +177,7 @@ int depth_error(int depth, struct log_list *parent_log);
 // Errors produced during semantic analsis / code generation / type checking
 
 static inline int err_quit(char *msg) {
-	printf(msg);
+	printf("%s", msg);
 	return ROLLBACK;
 }
 

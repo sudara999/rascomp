@@ -23,35 +23,14 @@ enum token_type {
 	LE,	// <=
 	GT,	// >
 	GE,	// >=
-	EQ,		// eq?		!delete
-	EQV,	// eqv?		!delete
-	EQUAL,	// equal?	!delete
 	PLUS, 	// +
 	MINUS,	// -
 	MULT,	// *
 	DIV,	// /
-	NOT,	// not	!delete
-	AND,	// and	!delete
-	OR,		// or	!delete
 	// PUNCTUATION
 	LPAREN,		// (
 	RPAREN,		// )
 	QUOTE,		// `
-	// KEYWORDS
-	// ! Delete!
-	CAR,
-	CDR,
-	CONS,
-	LIST_F,
-	NULL_F,
-	LENGTH_F,
-	DEFINE_F,
-	LET,
-	LET_STAR,
-	LAMBDA,
-	IF,
-	COND,
-	ELSE,
 	// ATOMIC DATA TYPES
 	SYMBOL,		// e.g. free
 	INTEGER,	// e.g. 1
